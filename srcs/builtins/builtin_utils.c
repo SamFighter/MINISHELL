@@ -1,0 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/05 14:48:38 by salabbe           #+#    #+#             */
+/*   Updated: 2025/05/13 14:42:28 by salabbe          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../headers/minishell.h"
+
+char	*env_cut(char *str)
+{
+	int		i;
+	char	*cut;
+
+	i = 0;
+	if (!str)
+		return (NULL);
+	while (str[i] != '=')
+		i++;
+	cut = ft_substr(str, i + 1, ft_strlen(str) - (i + 1));
+	return (cut);
+}
+
+bool	is_builtin(t_cmd *cmd)
+{
+	const char	*builtin[] = {"cd", "pwd", "echo", "exit", \
+				"export", "env", "unset", NULL};
+	int			y;
+
+	y = 0;
+	while (builtin[y])
+	{
+		if (ft_strcmp((char *) builtin[y], cmd->str_cmd) == 0)
+			return (true);
+		y++;
+	}
+	return (false);
+}

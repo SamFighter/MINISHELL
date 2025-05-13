@@ -1,0 +1,73 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/09 10:39:19 by fmontel           #+#    #+#             */
+/*   Updated: 2025/04/28 15:32:15 by fmontel          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "headers/libft.h"
+
+/**
+ * Malloc an array of type 'size' and of lenght 'len' and is set to 0
+ *
+ * - Example:
+ * char* str = ft_calloc(5 * sizeof(char));
+ */
+void	*ft_calloc(size_t len, size_t size)
+{
+	unsigned char	*s;
+
+	if (len <= 0 || size <= 0)
+	{
+		s = malloc(0);
+		if (!s)
+			return (NULL);
+		return (s);
+	}
+	s = malloc(len * size);
+	if (!s)
+		return (NULL);
+	ft_bzero(s, len * size);
+	return (s);
+}
+
+/**
+ * Malloc a double array of int:
+ *  
+ * The main array is of lenght 'len',
+ * the secondary ones are of lenght 's_len' and are set to 0 with ft_bzero
+ *
+ * - Example:
+ * int** i = ft_calloc_dbl_i(5, 3);
+ */
+int	**dbl_calloc_int(size_t len, size_t s_len)
+{
+	int		**s;
+	size_t	i;
+
+	i = 0;
+	if (len <= 0)
+	{
+		s = malloc(0);
+		if (!s)
+			return (NULL);
+		return (s);
+	}
+	s = malloc(len * sizeof(int *));
+	if (!s)
+		return (NULL);
+	while (i < len)
+	{
+		s[i] = malloc(s_len * sizeof(int));
+		if (!s[i])
+			return (NULL);
+		ft_bzero(s[i], s_len * sizeof(int));
+		i++;
+	}
+	return (s);
+}
