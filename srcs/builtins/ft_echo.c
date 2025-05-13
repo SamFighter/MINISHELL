@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:14:40 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 15:02:10 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/13 19:37:29 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int 	bool_new_line(char *str)
 		i++;
 		while (str[i] && str[i] == 'n')
 			i++;
-		if (i == ft_strlen(str))
+		if (i == str_len(str))
 			return (1);
 	}
 	return (0);
@@ -52,7 +52,7 @@ static void print_echo(char **args, int len, int y, bool new_line)
 	}
 	while (y < len)
 	{
-		write(1, args[y], ft_strlen(args[y]));
+		write(1, args[y], str_len(args[y]));
 		if (y != len - 1)
 			write(1, " ", 1);
 		y++;

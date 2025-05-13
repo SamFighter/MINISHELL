@@ -59,11 +59,11 @@ char	*dump_line(int fd, char *dump, char *buffer)
 		if (readed == 0)
 			return (dump);
 		if (!dump)
-			dump = ft_strdup("");
+			dump = str_dup("");
 		tmp = dump;
-		dump = ft_strjoin(tmp, buffer);
+		dump = str_join(tmp, buffer);
 		free(tmp);
-		if (ft_strchr(buffer, '\n'))
+		if (ctn_strchr(buffer, '\n'))
 			return (dump);
 	}
 	return (dump);
@@ -82,7 +82,7 @@ char	*clean_dump(char *dest)
 	}
 	while (dest[i] != '\n' && dest[i] != 0)
 		i++;
-	dump = ft_substr(dest, i + 1, ft_strlen(dest) - i);
+	dump = str_substr(dest, i + 1, str_len(dest) - i);
 	if (!dump || dump[0] == 0)
 	{
 		free(dump);

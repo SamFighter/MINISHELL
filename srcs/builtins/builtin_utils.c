@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 14:48:38 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 14:42:28 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/13 19:46:22 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*env_cut(char *str)
 		return (NULL);
 	while (str[i] != '=')
 		i++;
-	cut = ft_substr(str, i + 1, ft_strlen(str) - (i + 1));
+	cut = str_substr(str, i + 1, str_len(str) - (i + 1));
 	return (cut);
 }
 
@@ -35,7 +35,7 @@ bool	is_builtin(t_cmd *cmd)
 	y = 0;
 	while (builtin[y])
 	{
-		if (ft_strcmp((char *) builtin[y], cmd->str_cmd) == 0)
+		if (str_strcmp((char *) builtin[y], cmd->str_cmd) == 0)
 			return (true);
 		y++;
 	}

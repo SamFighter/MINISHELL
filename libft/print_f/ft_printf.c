@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 11:27:49 by salabbe           #+#    #+#             */
-/*   Updated: 2025/04/28 16:01:37 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/05/12 13:47:28 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,48 @@ static int	get_info(char c, int len, va_list arg)
 	else if (c == 'X')
 		len += ft_putnbr_hexa_up(va_arg(arg, unsigned int));
 	else if (c == '%')
-		len += ft_putlchar('%');
+		len += utl_putlchar('%');
 	else if (c == 'c')
-		len += ft_putlchar(va_arg(arg, int));
+		len += utl_putlchar(va_arg(arg, int));
 	else if (c == 's')
-		len += ft_putlstr(va_arg(arg, char *));
+		len += utl_putlstr(va_arg(arg, char *));
+	else if (c == 'S')
+		len += utl_putlarrstr(va_arg(arg, const char **));
 	else if (c == 'p')
 		len += ft_printadd(va_arg(arg, void *));
 	else if (c == 'd' || c == 'i')
-		len += ft_putlnbr(va_arg(arg, int));
+		len += utl_putlnbr(va_arg(arg, int));
 	else
 	{
-		len += ft_putlchar ('%');
-		len += ft_putlchar(c);
+		len += utl_putlchar ('%');
+		len += utl_putlchar(c);
 	}
 	return (len);
 }
 
+/**
+ * @brief Print the inputed string in the console and support
+ * some format specifiers:
+ * 
+ * - i: signed int
+ * 
+ * - d: signed int
+ * 
+ * - u: unsigned int
+ * 
+ * - c: character
+ * 
+ * - s: string (char *)
+ * 
+ * - S: string array (char **)
+ * 
+ * - p: pointer adress
+ * 
+ * - x: hexadecimal (lower-case)
+ * 
+ * - X: hexadecimal (upper-case)
+ * @return Lenght of printed message
+ */
 int	ft_printf(const	char *str, ...)
 {
 	va_list		arg;
@@ -53,7 +78,7 @@ int	ft_printf(const	char *str, ...)
 	while (str[i])
 	{
 		if (str[i] != '%')
-			len += ft_putlchar(str[i]);
+			len += utl_putlchar(str[i]);
 		else
 		{
 			len = get_info(str[i + 1], len, arg);

@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 14:22:35 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 17:53:43 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/13 19:38:20 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,23 +27,23 @@ char    *get_path(char *str_envp, t_cmdlist *cmdlist)
 	{
 		if (str_envp[start] == ':' || str_envp[start + 1] == 0)
 		{
-			path = ft_substr(str_envp, end, start - end);
+			path = str_substr(str_envp, end, start - end);
 			if (!path)
 				perror(path);
-			len = ft_strlen(path);
+			len = str_len(path);
 			path[len] = '/';
 			if (check_path(path, cmdlist->cmds->str_cmd) == 1)
-				return (ft_strjoin(path, cmdlist->cmds->str_cmd));
+				return (str_join(path, cmdlist->cmds->str_cmd));
 			end = start + 1;
 		}
 		start++;
 	}
-	return (ft_strjoin(path, str_envp));
+	return (str_join(path, str_envp));
 }
 
 int	check_path(char *path, char *cmd)
 {
-	if (access(ft_strjoin(path, cmd), X_OK))
+	if (access(str_join(path, cmd), X_OK))
 		return (0);
 	else 
 		return (1);

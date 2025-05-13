@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 13:18:05 by salabbe           #+#    #+#             */
-/*   Updated: 2025/04/28 16:00:55 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/05/06 17:03:22 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,6 @@ int	ft_putnbr_unsigned(unsigned int nb)
 	len = 0;
 	if (nb > 9)
 		len += ft_putnbr_unsigned(nb / 10);
-	len += ft_putlchar((nb % 10) + 48);
+	len += utl_putlchar((nb % 10) + 48);
 	return (len);
 }

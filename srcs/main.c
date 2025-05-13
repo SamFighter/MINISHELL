@@ -6,48 +6,27 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 17:48:02 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/13 20:06:26 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
 #include <signal.h>
 
-/**
- * Initialize the controller of the program and all it's content to NULL
- */
-void	init_cont(t_controller *controller)
-{
-	controller->excode = 0;
-	controller->pwd = NULL;
-	controller->old_pwd = NULL;
-	controller->env = NULL;
-	controller->cmdlist.tokens = init_token();
-	controller->cmdlist.cmds = init_cmd();
-}
+int	g_sig;
 
 /**
  * Free the controller of the program and all it's content
  */
-void	free_cont(t_controller *cont)
+void	controller_free(t_controller *cont)
 {
-	free_cmdlist(&cont->cmdlist);
+	cmdlist_free(&cont->cmdlist);
 	if (cont->pwd)
 		free(cont->pwd);
 	if (cont->old_pwd)
 		free(cont->old_pwd);
 	if (cont->env)
-		super_free((void **)cont->env);
-}
-
-/**
- * Exit the program cleanly and return 'excode'
- */
-int	exit_cmd(t_controller *cont, int excode)
-{
-	rl_clear_history();
-	free_cont(cont);
-	exit (excode);
+		utl_super_free((void **)cont->env);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -58,23 +37,23 @@ int	main(int argc, char **argv, char **env)
 
 	(void)argc;
 	(void)argv;
-	init_cont(&cont);
-	dup_env(&cont, env);
-	while (1)
+	initializer(&cont, env);
+	while (g_sig != EOF)
 	{
-		prompt = promt_controller(&cont);
+		prompt = prompt_controller(cont.excode, cont.env);
 		line = readline(prompt);
 		free(prompt);
+		if (g_sig == 130 || g_sig == 139)
+			cont.excode = g_sig;
 		if (!line)
-			exit(0);
-		tokenizer(line, &cont.cmdlist);
-		add_history(line);
-		exec_cmd(&cont);
-		reset_cmdlist(&cont.cmdlist);
-		cont.excode++;
-		if (cont.excode > 4)
-			cont.excode = 0;
-		// if (cont.excode == 4)
-		// 	exit_cmd(&cont, cont.excode);
+			closing(&cont);
+		if (str_len(line) != 0)
+		{
+			tokenizer(line, &cont);
+			controller_exec(&cont);
+			add_history(line);
+		}
+		cmdlist_reset(&cont.cmdlist);
 	}
+	return (cont.excode);
 }

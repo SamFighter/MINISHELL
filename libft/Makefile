@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+         #
+#    By: fmontel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/09 10:51:03 by salabbe           #+#    #+#              #
-#    Updated: 2025/04/29 19:28:52 by salabbe          ###   ########.fr        #
+#    Updated: 2025/05/13 17:57:54 by fmontel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,71 +16,82 @@ NAME			:=	libft.a
 #                                 INGREDIENTS                                  #
 # **************************************************************************** #
 
-MANDATORY		:=	ft_atoi.c 					\
-					ft_bzero.c 					\
-					ft_calloc.c 				\
-					ft_isalnum.c 				\
-					ft_isalpha.c 				\
-					ft_isascii.c 				\
-					ft_isdigit.c 				\
-					ft_isprint.c 				\
-					ft_iswhitespace.c 			\
-					ft_itoa.c 					\
-					ft_memchr.c 				\
-					ft_memcmp.c 				\
-					ft_memcpy.c 				\
-					ft_memmove.c 				\
-					ft_memset.c 				\
-					ft_split.c 					\
-					ft_strchr.c 				\
-					ft_strdup.c 				\
-					ft_striteri.c 				\
-					ft_strjoin.c 				\
-					ft_strlcat.c 				\
-					ft_strlcpy.c 				\
-					ft_strlen.c 				\
-					ft_strmapi.c 				\
-					ft_strncmp.c 				\
-					ft_strstr.c 				\
-					ft_strrchr.c 				\
-					ft_strtrim.c 				\
-					ft_substr.c 				\
-					ft_tolower.c 				\
-					ft_toupper.c 				\
-					ft_putendl_fd.c 			\
-					checkchar.c 				\
-					super_free.c 				\
-					get_next_line.c				\
-					strarr_dup.c 				\
-					sf_tablen.c 				\
-					ft_putchar.c 				\
-					ft_putnbr.c 				\
-					ft_putstr.c 				\
-					len_int.c					\
-					print_f/ft_printf.c 		\
-					print_f/ft_sideprintf.c 	\
-					ctoa.c						\
-
-BONUS			:= 	ft_lstnew_bonus.c 			\
-					ft_lstsize_bonus.c 			\
-					ft_lstadd_front_bonus.c 	\
-					ft_lstlast_bonus.c 			\
-					ft_lstadd_back_bonus.c 		\
-					ft_lstdelone_bonus.c 		\
-					ft_lstclear_bonus.c 		\
-					ft_lstiter_bonus.c 			\
-					ft_lstmap_bonus.c
+MANDATORY		:=	get_next_line.c 				\
+					print_f/ft_printf.c 			\
+					print_f/ft_sideprintf.c 		\
+					print_f/fd_printf.c 			\
+					print_f/fd_sideprintf.c 		\
+					print_f/utl_printf.c 			\
+					visual/rep_colorstr.c			\
+					func_contain/ctn_chckchar.c		\
+					func_contain/ctn_isalnum.c		\
+					func_contain/ctn_isalpha.c		\
+					func_contain/ctn_isascii.c		\
+					func_contain/ctn_ischar.c		\
+					func_contain/ctn_isdigit.c		\
+					func_contain/ctn_isprint.c		\
+					func_contain/ctn_iswhitespace.c	\
+					func_contain/ctn_strchr.c		\
+					func_contain/ctn_strrchr.c		\
+					func_convert/cnv_atoi.c			\
+					func_convert/cnv_sttoa.c		\
+					func_convert/cnv_itoa.c			\
+					func_memory/mem_bzero.c			\
+					func_memory/mem_calloc.c		\
+					func_memory/mem_chr.c			\
+					func_memory/mem_cmp.c			\
+					func_memory/mem_cpy.c			\
+					func_memory/mem_move.c			\
+					func_memory/mem_set.c			\
+					func_replacement/rep_atoa.c		\
+					func_replacement/rep_atoi.c		\
+					func_replacement/rep_ctoa.c		\
+					func_replacement/rep_ctoi.c		\
+					func_replacement/rep_ctonull.c	\
+					func_replacement/rep_ptonull.c	\
+					func_replacement/rep_tolower.c	\
+					func_replacement/rep_toupper.c	\
+					func_string/str_arrdup.c		\
+					func_string/str_arrrep.c		\
+					func_string/str_cat.c			\
+					func_string/str_cmp.c			\
+					func_string/str_cpy.c			\
+					func_string/str_dup.c			\
+					func_string/str_iteri.c			\
+					func_string/str_join.c			\
+					func_string/str_len.c			\
+					func_string/str_mapi.c			\
+					func_string/str_rarrdup.c		\
+					func_string/str_split.c			\
+					func_string/str_str.c			\
+					func_string/str_substr.c		\
+					func_string/str_trim.c			\
+					func_utility/utl_dbl_arrlen.c	\
+					func_utility/utl_int_len.c	\
+					func_utility/utl_putchar.c		\
+					func_utility/utl_putarrstr.c	\
+					func_utility/utl_putendl.c		\
+					func_utility/utl_putnbr.c		\
+					func_utility/utl_putstr.c		\
+					func_utility/utl_super_free.c	\
 
 M_OBJS			:=	$(MANDATORY:%.c=.build/%.o)
 DEPS			:=	$(M_OBJS:%.o=%.d)
 
 CC				:=	cc
-CFLAGS			:=	-Wall -Wextra -Werror -Ofast
+CFLAGS			:=	-Wall -Wextra -Werror -g
 CPPFLAGS		:=	-MP -MMD -Iheaders/minishell.h	\
 					-Iheaders/tokenizer.h			\
+					-Ilibft/debug.h					\
+					-Ilibft/headers/func_cnv.h		\
+					-Ilibft/headers/func_ctn.h		\
+					-Ilibft/headers/func_mem.h		\
+					-Ilibft/headers/func_rep.h		\
+					-Ilibft/headers/func_str.h		\
+					-Ilibft/headers/func_utl.h		\
 					-Ilibft/headers/ft_printf.h		\
-					-Ilibft/headers/libft.h			\
 					-Ilibft/headers/get_next_line.h	\
+					-Ilibft/headers/libft.h			\
 
 # **************************************************************************** #
 #                                    TOOLS                                     #
@@ -115,9 +126,6 @@ re:
 	$(MAKE) fclean
 	$(MAKE) all
 
-bonus: $(B_OBJS)
-	ar -rc $(NAME) $(B_OBJS)
-
 add-ons: $(AO_OBJS)
 	ar -rc $(NAME) $(AO_OBJS)
 
@@ -125,10 +133,10 @@ add-ons: $(AO_OBJS)
 #                                    STYLE                                     #
 # **************************************************************************** #
 
-GREEN			:= \033[0;32m
-YELLOW			:= \033[0;33m
-BLUE			:= \033[0;34m
-CYAN			:= \033[0;36m
+GREEN			:= \033[0;92m
+YELLOW			:= \033[0;93m
+BLUE			:= \033[0;94m
+CYAN			:= \033[0;96m
 OFF				:= \033[m
 
 header:

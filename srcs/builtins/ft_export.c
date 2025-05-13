@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 15:31:39 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 14:41:19 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/13 19:43:21 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ static int	syntax_export(char *str)
 	int i;
 
 	i = 0;
-	if (!str[0] || (str[0] != '_' && !ft_isalpha(str[0])))
+	if (!str[0] || (str[0] != '_' && !ctn_isalpha(str[0])))
 		return (1);
 	while (str[i] && str[i] != '=')
 	{
-		if (str[i] != '_' && !ft_isalnum(str[i]))
+		if (str[i] != '_' && !ctn_isalnum(str[i]))
 			return (1);
 		i++;
 	}
@@ -65,7 +65,7 @@ static int	check_alr_env(char **env, char *str)
 	j = 0 ;
 	while (env[j])
 	{
-		if (!ft_strncmp(env[j], str, i) && (env[j][i] == '\0' || env[j][i] == '='))
+		if (!str_ncmp(env[j], str, i) && (env[j][i] == '\0' || env[j][i] == '='))
 			return (j);
 		j++;
 	}
@@ -83,12 +83,12 @@ char	*exportation(char *str, t_controller *cont)
 	{
 		free(cont->env[pos]);
 		cont->env[pos] = NULL;
-		cont->env[pos] = ft_strdup(str);
+		cont->env[pos] = str_dup(str);
 		return (cont->env[pos]);
 	}
 	else if (pos < 0)
-		cont->env = strarr_dupnset(cont->env, str);
-	return (cont->env[sf_tablen(cont->env)]);
+		cont->env = str_arrdup_nset(cont->env, str);
+	return (cont->env[utl_dbl_arrlen(cont->env)]);
 }
 
 int	ft_export(t_controller *cont, char **args)
