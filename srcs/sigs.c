@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 14:41:18 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 20:03:41 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/14 13:31:53 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ void	sig_int(int sig)
 	rl_redisplay();
 }
 
-void	sig_segv(int sig)
-{
-	(void) sig;
-	g_sig = 139;
-	fd_printf(2, "Segmentation fault\n");
-	exit(11);
-}
+// void	sig_segv(int sig)
+// {
+// 	(void) sig;
+// 	g_sig = 139;
+// 	fd_printf(2, "Segmentation fault\n");
+// 	exit(11);
+// }
 
 void	sig_abrt(int sig)
 {

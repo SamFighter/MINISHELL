@@ -6,24 +6,47 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:09:29 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 15:34:55 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/19 14:28:37 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-int	ft_cd(char *path, t_controller *cont)
+static void	update_oldpwd(t_controller *cont, char *old_pwd)
 {
-	if (!path)
+	char *tmp;
+
+	free(cont->old_pwd);
+	cont->old_pwd = str_dup(old_pwd);
+	tmp = str_join("OLDPWD=", old_pwd);
+	exportation(tmp, cont);
+	free(tmp);
+}
+/**
+ * @brief Basic cd function to move between directories, and update pwd and old_pwd
+ * 
+ * @param args 
+ * @param cont 
+ * @return int 
+ */
+int	ft_cd(char **args, t_controller *cont)
+{
+	int		rtn_chdir;
+	char	*old_pwd;
+
+	if (!args || !args[0])
 		return (1);
-	if (chdir(path) == 0)
+	old_pwd = getcwd(NULL, PATH_MAX);
+	rtn_chdir = chdir(args[0]);
+	if (rtn_chdir == -1)
 	{
-		free(cont->old_pwd);
-		cont->old_pwd = NULL;
-		cont->old_pwd = env_cut(search_envp(cont->pwd, cont->env));
-		free(cont->pwd);
-		cont->pwd = NULL;
-		cont->pwd = getcwd(cont->pwd, PATH_MAX);
+		perror(args[0]);
+		free(old_pwd);
+		return (1);
 	}
+	update_oldpwd(cont, old_pwd);
+	free(old_pwd);
+	free(cont->pwd);
+	cont->pwd = getcwd(NULL, PATH_MAX);
 	return (0);
 }

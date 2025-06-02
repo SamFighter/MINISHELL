@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:14:40 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 19:37:29 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/19 11:21:47 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,12 @@ static void print_echo(char **args, int len, int y, bool new_line)
 	if (new_line)
 		write(1, "\n", 1);
 }
-
+/**
+ * @brief Print in the standard output the args
+ * 
+ * @param args 
+ * @return int 
+ */
 int	ft_echo(char **args)
 {
 	int		len;
@@ -70,7 +75,7 @@ int	ft_echo(char **args)
 	len = 0;
 	while (args[len])
 		len++;
-	y = 1;
+	y = 0;
 	new_line = true;
 	print_echo(args, len, y, new_line);
 	return (0);

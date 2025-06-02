@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 17:14:02 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/05/20 15:47:47 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,19 @@
 # define INPUT		5
 # define OUTPUT		6
 # define PIPE		9
-# define IN			-1
-# define OUT		-2
-# define HEREDOC	-3
-# define APPEND		-4
+# define IN			-1	//<
+# define OUT		-2	//>
+# define HEREDOC	-3	//<<
+# define APPEND		-4	//>>
 
 //----------------   structs   ---------------------------------
 
+/**
+ * @param	char			*string;
+ * @param	char			**env_str;
+ * @param	int				len;
+ * @param	int				type;
+ */
 typedef struct s_token
 {
 	char			*string;
@@ -37,6 +43,17 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+/**
+ * @param	t_token			*tokens;
+ * @param	int				has_cmd;
+ * @param	int				nb_tokens;
+ * @param	char			*str_cmd;
+ * @param	char			**args;
+ * @param	char			**infiles;
+ * @param	char			**outfiles;
+ * @param	int				fd_inf;
+ * @param	int				fd_out;
+ */
 typedef struct s_cmd
 {
 	t_token			*tokens;
@@ -44,12 +61,20 @@ typedef struct s_cmd
 	int				nb_tokens;
 	char			*str_cmd;
 	char			**args;
+	char			**cmd_args;
 	char			**infiles;
 	char			**outfiles;
+	int				fd_inf;
+	int				fd_out;
 	struct s_cmd	*prev;
 	struct s_cmd	*next;
 }	t_cmd;
 
+/**
+ * @param	t_token	*tokens;
+ * @param	t_cmd	*cmds;
+ * @param	int		invalid;
+ */
 typedef struct s_cmdlist
 {
 	t_token	*tokens;
@@ -71,6 +96,8 @@ void		set_type_token(t_cmdlist *cmdlist);
 void		cmd_toarr(t_cmdlist **cmdlist, char **env);
 void		cmd_toarr2(t_cmdlist **cmdlist, char **env);
 void		cmd_toarr3(t_cmdlist **cmdlist);
+// int 		get_infile(t_controller *cont, t_token *tok, t_cmd *cmd);
+// int 		get_out(t_controller *cont, t_token *tok, t_cmd *cmd);
 
 //----------------   Init Tokens   -----------------------------
 

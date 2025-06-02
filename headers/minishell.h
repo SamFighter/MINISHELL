@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 19:43:37 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/27 15:02:41 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ typedef struct s_controller
 	char		*pwd;
 	char		*old_pwd;
 	int			excode;
-	t_cmdlist	cmdlist;
 	char		**env;
+	int			pip[2];
+	t_cmdlist	cmdlist;
 }	t_controller;
 
 //--------------------------------------------------------------
@@ -82,7 +83,7 @@ void	tk_free(t_token *tk);
 //----------------   Signals   ---------------------------------
 
 void	sig_int(int sig);
-void	sig_segv(int sig);
+// void	sig_segv(int sig);
 void	sig_abrt(int sig);
 
 //------------------   Execs   ---------------------------------
@@ -90,12 +91,20 @@ void	sig_abrt(int sig);
 bool	is_builtin(t_cmd *cmd);
 int		dup_env(t_controller *cont, char **envp);
 int		make_env(t_controller *cont);
-int		ft_cd(char *path, t_controller *cont);
+int		ft_cd(char **args, t_controller *cont);
 int		ft_echo(char **args);
+int		ft_export(t_controller *cont, char **args);
+int		ft_env(t_controller *cont);
+int		ft_pwd(void);
+int 	ft_unset(char **str, t_controller *cont);
 int		check_path(char *path, char *cmd);
 char	*search_envp(char *str, char **envp);
 char	*env_cut(char *str);
 char	*exportation(char *str, t_controller *cont);
-void 	exec_cmd(t_controller *cont);
+bool    search_pipe(t_token *tok);
+int		exec(t_controller *cont);
+int 	exec_cmd(t_controller *cont);
+bool    search_pipe(t_token *tok);
+int		here_doc(char *eof, t_controller *cont);
 
 #endif

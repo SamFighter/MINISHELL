@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:36:25 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 19:38:46 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/19 14:53:52 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 int    dup_env(t_controller *cont, char **envp)
 {
-	int	y;
-
-	y = 0;
     if (!(*envp))
 		return (make_env(cont)); 
 	cont->env = str_arrdup(envp);

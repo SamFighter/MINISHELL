@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 16:17:09 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 19:51:17 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/20 15:48:24 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ void	invalid_print(t_controller *controller);
  */
 void	controller_exec(t_controller *controller)
 {
-	if (controller->cmdlist.invalid != 0)
-		invalid_print(controller);
-	else
-		exec_cmd(controller);
+	// if (controller->cmdlist.invalid != 0)
+	// 	invalid_print(controller);
+	// else
+		exec(controller);
 }
 
 void	invalid_print(t_controller *controller)

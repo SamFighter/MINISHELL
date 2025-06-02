@@ -6,7 +6,7 @@
 #    By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/24 18:41:03 by salabbe           #+#    #+#              #
-#    Updated: 2025/05/13 19:44:00 by salabbe          ###   ########.fr        #
+#    Updated: 2025/05/20 15:50:05 by salabbe          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,10 +45,15 @@ MANDATORY	= 		srcs/main.c 									\
 					srcs/debug/print_cmds.c			 				\
 					srcs/builtins/ft_cd.c							\
 					srcs/builtins/ft_export.c						\
-					srcs/builtins/builtin_utils.c					\
 					srcs/builtins/ft_echo.c							\
+					srcs/builtins/ft_unset.c						\
+					srcs/builtins/ft_pwd.c							\
+					srcs/builtins/ft_env.c							\
+					srcs/builtins/builtin_utils.c					\
 					srcs/exec/envp_controller.c						\
 					srcs/exec/exec.c								\
+					srcs/exec/exec_utils.c							\
+					# srcs/exec/cmd_fd.c							\
 
 N_OBJS		=	$(MANDATORY:%.c=.build/%.o)
 DEPS		=	$(N_OBJS:%.o=%.d)

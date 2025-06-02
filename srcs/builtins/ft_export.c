@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 15:31:39 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/13 19:43:21 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/05/19 11:22:44 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,13 @@ static int	check_alr_env(char **env, char *str)
 	return (-1);
 }
 
+/**
+ * @brief The entire exportation work is here, its the core of ft_export
+ * 
+ * @param str 
+ * @param cont 
+ * @return char* 
+ */
 char	*exportation(char *str, t_controller *cont)
 {
 	int	pos;
