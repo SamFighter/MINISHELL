@@ -106,5 +106,6 @@ int		exec(t_controller *cont);
 int 	exec_cmd(t_controller *cont);
 bool    search_pipe(t_token *tok);
 int		here_doc(char *eof, t_controller *cont);
+void	redir_in_out(t_controller *cont, t_cmd *cmd, int *pip);
 
 #endif

@@ -41,3 +41,23 @@ bool	is_builtin(t_cmd *cmd)
 	}
 	return (false);
 }
+
+int		prepare_builtin(t_controller *cont, t_cmd *cmd)
+{
+	int	stout;
+
+	stout = -1;
+	if (cmd->fd_out >= 0)
+	{
+	  stout = dup(1);
+	  dup2(cmd->fd_out, 1);
+	}
+	exec_builtin(stout, data, cmd);
+	if (cmd->fd_out >= 0)
+	{
+	  dup2(stout, 1);
+	  close(stout);
+	}
+	return (0);
+}
+

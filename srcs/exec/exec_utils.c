@@ -25,3 +25,17 @@ bool    search_pipe(t_token *tok)
     }
     return (false);
 }
+
+int		check_cmd(char *path, t_controller *cont)
+{
+	char *abs_path;
+
+	path = env_cut(search_envp("PATH=", cont->env));
+	abs_path = get_path(path, cont->cmdlist);
+	if (abs_path == cont->cmdlist.cmds->str_cmd)i
+	{
+		ft_printf("%s : command not found", abs_path);
+		return (-1);
+	}
+	return (0);
+}

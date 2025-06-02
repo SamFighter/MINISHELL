@@ -61,22 +61,23 @@ int	check_path(char *path, char *cmd)
  * @param cont 
  * @param args 
  */
-int	exec_builtins(t_controller *cont, char **args)
+int	exec_builtins(int stou, t_controller *cont, char **args)
 {
+	(void) stou;
 	if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "cd", INT_MAX))
-		ft_cd(args, cont);
+		cont->excode = ft_cd(args, cont);
 	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "echo", INT_MAX))
-		ft_echo(args);
+		cont->excode = ft_echo(args);
 	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "env", INT_MAX))
-		ft_env(cont);
+		cont->excode = ft_env(cont);
 	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "export", INT_MAX))
-		ft_export(cont, args);
+		cont->excode = ft_export(cont, args);
 	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "pwd", INT_MAX))
-		ft_pwd();
+		cont->excode = ft_pwd();
 	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "unset", INT_MAX))
-		ft_unset(args, cont);
+		cont->excode = ft_unset(args, cont);
 	else
-		return (1);
+		return (stou);
 }
 
 /**
