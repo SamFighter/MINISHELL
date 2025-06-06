@@ -1,143 +1,91 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   exec.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/29 14:22:35 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/31 18:17:55 by salabbe          ###   ########.fr       */
+/*   Created: 2025/06/02 16:47:28 by samfighter        #+#    #+#             */
+/*   Updated: 2025/06/02 16:49:12 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-/**
- * @param str_envp 
- * @param cmdlist 
- * @return char* 
- */
-char    *get_path(char *str_envp, t_cmdlist *cmdlist)
+static void		built(int *pip, t_cmd *cmd, t_controller *cont)
 {
-	char	*path;
-	int     start;
-	int     end;
-	int 	len;
-
-	if (!str_envp)
-		return ("./");
-	start = 0;
-	end = 0;
-	while (str_envp[start])
-	{
-		if (str_envp[start] == ':' || str_envp[start + 1] == 0)
-		{
-			path = str_substr(str_envp, end, start - end);
-			if (!path)
-				perror(path);
-			len = str_len(path);
-			path[len] = '/';
-			if (check_path(path, cmdlist->cmds->str_cmd) == 0)
-				return (str_join(path, cmdlist->cmds->str_cmd));
-			end = start + 1;
-		}
-		start++;
-	}
-	return (cmdlist->cmds->str_cmd);
-}
-/**
- * @param path 
- * @param cmd 
- * @return int 
- */
-int	check_path(char *path, char *cmd)
-{
-	if (!access(str_join(path, cmd), X_OK))
-		return (0);
-	else 
-		return (1);
-}
-/**
- * @param cont 
- * @param args 
- */
-int	exec_builtins(int stou, t_controller *cont, char **args)
-{
-	(void) stou;
-	if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "cd", INT_MAX))
-		cont->excode = ft_cd(args, cont);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "echo", INT_MAX))
-		cont->excode = ft_echo(args);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "env", INT_MAX))
-		cont->excode = ft_env(cont);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "export", INT_MAX))
-		cont->excode = ft_export(cont, args);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "pwd", INT_MAX))
-		cont->excode = ft_pwd();
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "unset", INT_MAX))
-		cont->excode = ft_unset(args, cont);
+	close(pip[0]);
+	if (cmd->fd_out < 0 && cmd->next != cont->cmdlist->cmds)
+		cmd->fd_out = pip[1];
 	else
-		return (stou);
+		close(pip[1]);
+	prepare_builtin(cont, cmd);
 }
 
-/**
- * @brief functionnal execution (without pipe), need some adjustement
- * 
- */
-int	exec(t_controller *cont)
+static void  exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 {
-	t_cmd	*tmp;
-	int 	*pip;
+  char  *path;
 
-	tmp = cont->cmdlist.cmds;
+  path = NULL;
+  if (is_builtin(cmd))
+	  built(pip, cmd, cont);
+  else if (check_cmd(&path, cont))
+  {
+	redir_in_out(cont, cmd, pip);
+	rl_clear_history();
+	execve(path, cmd->cmd_args, cont->env);
+  }
+  if (path)
+	  free(path);
+}
+
+static void		exec_parent(t_cmd *cmd, int *pip)
+{
+	close(pip[1]);
+	if (cmd->fd_inf >= 0)
+		close(cmd->fd_inf);
+	if (cmd->fd_inf == -2)
+		cmd->fd_inf = pip[0];
+	if (cmd->next->fd_inf == -2)
+		cmd->fd_inf = pip[0];
+	else
+		close(pip[0]);
+}
+
+static void		exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
+{
+	g_sig = fork();
+	if (g_sig < 0)
+		perror(g_sig);
+	else if (!g_sig)
+	{
+	  if(cmd->cmd_args && cmd->cmd_args[0])
+			exec_child(cont, cmd, pip);
+	  else
+			perror(cmd->cmd_args);
+	}
+	else
+		exec_parent(cmd, pip);
+}
+
+int		exec(t_controller *cont)
+{
+	t_cmd	*cmd;
+	int		*pip;
+
 	pip = cont->pip;
-	cont->cmdlist.cmds->cmd_args = str_rarrdup_nset(cont->cmdlist.cmds->args, cont->cmdlist.cmds->str_cmd);
-	if (search_pipe(cont->cmdlist.cmds->tokens) == false)
-	{
-		if (is_builtin(cont->cmdlist.cmds) == true)
-			return (exec_builtins(cont, cont->cmdlist.cmds->args));
-		else
-			return (exec_cmd(cont));
-	}
-	else
-	{
-		printf("pas encore fait les pipes connard\n");
-		return (0);
-	}
-	return (0);
-}
-
-/**
- * @brief Execute une ligne de commande qui n'a aucun pipe
- * 
- * @param cont 
- * @param cmds 
- * @param pip 
- */
-int exec_cmd(t_controller *cont)
-{
-	int		pid;
-	int		status;
-	char	*path;
-	char 	*abs_path;
-
-	pid = fork();
-	status = 0;
-	if (pid < 0)
+	cmd = cont->cmdlist->cmds;
+	if (is_builtin(cmd))
+		return (prepare_builtin(cont, cmd));
+	if (pipe(pip) == -1)
 		return (1);
-	else if (pid > 0)
+	exec_cmd(cont, cmd, pip);
+	cmd = cmd->next;
+	while (cmd != cont->cmdlist->cmds)
 	{
-		waitpid(pid, &status, 0);
-		kill(pid, SIGTERM);
+		if (pipe(pip) == -1)
+		  return (-1);
+		exec_cmd(cont, cmd, pip);
+		cmd = cmd->next;
 	}
-	else
-	{
-		path = env_cut(search_envp("PATH=", cont->env));
-		abs_path = get_path(path, &cont->cmdlist);
-		if (abs_path == cont->cmdlist.cmds->str_cmd)
-			ft_printf("%s : command not found\n", abs_path);
-		if (execve(abs_path, cont->cmdlist.cmds->cmd_args, cont->env) == -1)
-			return (1);
-	} 
-	return (0);
 }

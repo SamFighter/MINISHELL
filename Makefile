@@ -50,6 +50,8 @@ MANDATORY	= 		srcs/main.c 									\
 					srcs/builtins/ft_pwd.c							\
 					srcs/builtins/ft_env.c							\
 					srcs/builtins/builtin_utils.c					\
+					srcs/exec/heredoc.c								\
+					srcs/exec/redirection.c							\
 					srcs/exec/envp_controller.c						\
 					srcs/exec/exec.c								\
 					srcs/exec/exec_utils.c							\

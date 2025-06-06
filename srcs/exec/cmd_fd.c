@@ -40,7 +40,16 @@ static int  in_and_heredoc(t_controller *cont, t_token *tok, t_cmd *cmd)
         if (cmd->fd_inf < 0)
             return (1);
     }
-    //else heredoc
+    else if (tok->type == HEREDOC)
+	{
+		if (cmd->fd_inf >= 0)
+			close(cmd->fd_inf);
+		if (tok == tok->next)
+			perror(tok);
+		cmd->fd_inf = get_fd(cont, tok->next->string, HEREDOC);
+		if (cmd->fd_inf == -1)
+			return (1);
+	}
 }
 
 int get_infile(t_controller *cont, t_token *tok, t_cmd *cmd)
@@ -62,7 +71,7 @@ int get_infile(t_controller *cont, t_token *tok, t_cmd *cmd)
     return (0);
 }
 
-static int out_and_append(t_controller *cont, t_token *tmp, t_cmd *cmd)
+static int out_and_append(t_controller *cont, t_token *tok, t_cmd *cmd)
 {
     if (tmp->type == OUT)
     {
@@ -88,12 +97,12 @@ int get_out(t_controller *cont, t_token *tok, t_cmd *cmd)
     t_token *tmp;
 
     tmp = tok;
-    if (!get_out(cont, tmp, cmd))
+    if (!out_and_append(cont, tmp, cmd))
         return (1);
     tmp = tmp->next;
     while (tmp->type != PIPE)
     {
-        if (!get_out(cont, tmp, cmd))
+        if (!out_and_append(cont, tmp, cmd))
             return (1);
         tmp = tmp->next;
     }

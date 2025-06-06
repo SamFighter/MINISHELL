@@ -24,6 +24,8 @@ void	initializer(t_controller *controller, char **env)
 	dup_env(controller, env);
 	(void)env;
 	init_sig();
+	get_infile(controller, controller->cmdlist->tokens, controller->cmdlist->cmds->prev);
+	get_outfile(controller, controller->cmdlist->tokens, controller->cmdlist->cmds->prev);
 }
 
 void	init_sig(void)
