@@ -22,7 +22,8 @@ void	controller_exec(t_controller *controller)
 	// if (controller->cmdlist.invalid != 0)
 	// 	invalid_print(controller);
 	// else
-		exec(controller);
+	controller->cmdlist.cmds->cmd_args = str_rarrdup_nset(controller->cmdlist.cmds->args, controller->cmdlist.cmds->str_cmd);
+	exec(controller);
 }
 
 void	invalid_print(t_controller *controller)

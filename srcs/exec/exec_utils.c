@@ -17,34 +17,36 @@
  * @param cmdlist 
  * @return char* 
  */
-char    *get_path(char *str_envp, t_cmdlist *cmdlist)
+char *get_path(char *str_envp, t_cmdlist *cmdlist)
 {
-	char	*path;
-	int     start;
-	int     end;
-	int 	len;
+    char *path;
+    int start;
+    int end;
+    int len;
 
-	if (!str_envp)
-		return ("./");
-	start = 0;
-	end = 0;
-	while (str_envp[start])
-	{
-		if (str_envp[start] == ':' || str_envp[start + 1] == 0)
-		{
-			path = str_substr(str_envp, end, start - end);
-			if (!path)
-				perror(path);
-			len = str_len(path);
-			path[len] = '/';
-			if (check_path(path, cmdlist->cmds->str_cmd) == 0)
-				return (str_join(path, cmdlist->cmds->str_cmd));
-			end = start + 1;
-		}
-		start++;
-	}
-	return (cmdlist->cmds->str_cmd);
+    if (!str_envp)
+        return (str_dup("./"));
+    start = 0;
+    end = 0;
+    while (str_envp[start])
+    {
+        if (str_envp[start] == ':' || str_envp[start + 1] == '\0')
+        {
+            len = start - end;
+            path = str_substr(str_envp, end, len);
+            if (!path)
+                return NULL;
+            path[len] = '/';
+            if (check_path(path, cmdlist->cmds->str_cmd) == 0)
+                return str_join(path, cmdlist->cmds->str_cmd);
+            free(path);
+            end = start + 1;
+        }
+        start++;
+    }
+    return (str_dup(cmdlist->cmds->str_cmd));
 }
+
 /**
  * @param path 
  * @param cmd 
@@ -52,10 +54,15 @@ char    *get_path(char *str_envp, t_cmdlist *cmdlist)
  */
 int	check_path(char *path, char *cmd)
 {
-	if (!access(str_join(path, cmd), X_OK))
-		return (0);
-	else 
-		return (1);
+	char	*full_path;
+	int		result;
+
+	result = 1;
+	full_path = str_join(path, cmd);
+	if (!access(full_path, X_OK))
+		result = 0;
+	free(full_path);
+	return (result);
 }
 /**
  * @param cont 
@@ -93,16 +100,21 @@ bool    search_pipe(t_token *tok)
     return (false);
 }
 
-int		check_cmd(char *path, t_controller *cont)
+int		check_cmd(t_controller *cont)
 {
-	char *abs_path;
+	char	*abs_path;
+	char	*path_env;
 
-	path = env_cut(search_envp("PATH=", cont->env));
-	abs_path = get_path(path, &cont->cmdlist);
+	path_env = env_cut(search_envp("PATH=", cont->env));
+	abs_path = get_path(path_env, &cont->cmdlist);
+	free(path_env);
 	if (abs_path == cont->cmdlist.cmds->str_cmd)
 	{
 		ft_printf("%s : command not found", abs_path);
+		if (abs_path != NULL)
+			free(abs_path);
 		return (-1);
 	}
+	free(abs_path);
 	return (0);
 }

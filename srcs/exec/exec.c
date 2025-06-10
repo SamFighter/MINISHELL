@@ -29,8 +29,14 @@ static void  exec_child(t_controller *cont, t_cmd *cmd, int *pip)
   path = NULL;
   if (is_builtin(cmd))
 	  built(pip, cmd, cont);
-  else if (check_cmd(path, cont))
+  else 
   {
+	path = get_path(env_cut(search_envp("PATH=", cont->env)), &cont->cmdlist);
+	if (check_cmd(cont) == -1)
+	{
+		perror("command not found");
+		exit(EXIT_FAILURE);
+	}
 	redir_in_out(cont, cmd, pip);
 	rl_clear_history();
 	execve(path, cmd->cmd_args, cont->env);
@@ -46,7 +52,7 @@ static void		exec_parent(t_cmd *cmd, int *pip)
 		close(cmd->fd_inf);
 	if (cmd->fd_inf == -2)
 		cmd->fd_inf = pip[0];
-	if (cmd->next && cmd->next->fd_inf == -2)
+	if (cmd->next && cmd->next != cmd && cmd->next->fd_inf == -2)
 		cmd->fd_inf = pip[0];
 	else
 		close(pip[0]);
@@ -56,13 +62,13 @@ static void		exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 {
 	g_sig = fork();
 	if (g_sig < 0)
-		return ;
+		perror("fork failed");
 	else if (!g_sig)
 	{
-	  if(cmd->cmd_args && cmd->cmd_args[0])
+	  if (cmd && cmd->cmd_args && cmd->cmd_args[0])
 			exec_child(cont, cmd, pip);
 	  else
-			perror(cmd->cmd_args[0]);
+			perror("empty command");
 	}
 	else
 		exec_parent(cmd, pip);
@@ -81,12 +87,17 @@ int		exec(t_controller *cont)
 		return (1);
 	exec_cmd(cont, cmd, pip);
 	cmd = cmd->next;
+	if (!cmd)
+	  return (1);
+	if (cmd->next == NULL)
+      cmd->next = cmd;
 	while (cmd != cont->cmdlist.cmds)
 	{
 		if (pipe(pip) == -1)
 		  return (-1);
 		exec_cmd(cont, cmd, pip);
-		cmd = cmd->next;
+		if (cmd->next != NULL)
+			cmd = cmd->next;
 	}
 	return (0);
 }

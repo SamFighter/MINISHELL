@@ -18,7 +18,7 @@ static int  get_fd(char *filename, int type)
 
     fd = -2;
     if (type == IN)
-        fd = open(filename, O_RDONLY, 0664);
+        fd = open(filename, O_RDONLY);
     else if (type == OUT)
         fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
     else if (type == HEREDOC)
@@ -36,6 +36,8 @@ static int  in_and_heredoc(t_token *tok, t_cmd *cmd)
     {
         if (cmd->fd_inf >= 0)
             close(cmd->fd_inf);
+		if (tok->next == NULL)
+			return (1);
         cmd->fd_inf = get_fd(tok->next->string, IN);
         if (cmd->fd_inf < 0)
             return (1);
@@ -45,6 +47,8 @@ static int  in_and_heredoc(t_token *tok, t_cmd *cmd)
 		if (cmd->fd_inf >= 0)
 			close(cmd->fd_inf);
 		if (tok == tok->next)
+			return (1);
+		if (tok->next == NULL)
 			return (1);
 		cmd->fd_inf = get_fd(tok->next->string, HEREDOC);
 		if (cmd->fd_inf == -1)
@@ -58,14 +62,14 @@ int get_infile(t_token *tok, t_cmd *cmd)
     t_token *tmp;
 
     tmp = tok;
-    if (!in_and_heredoc(tmp, cmd))
+    if (in_and_heredoc(tmp, cmd))
         return (1);
     if (tmp->type == PIPE)
         return (0);
     tmp = tmp->next;
-    while (tmp->type != PIPE)
+    while (tmp && tmp->type != PIPE)
     {
-        if (!in_and_heredoc(tmp, cmd))
+        if (in_and_heredoc(tmp, cmd))
             return (1);
         tmp = tmp->next;
     }
@@ -78,6 +82,8 @@ static int out_and_append(t_token *tok, t_cmd *cmd)
     {
         if (cmd->fd_out >= 0)
             close(cmd->fd_out);
+	  	if (tok->next == NULL)
+			return (1);
         cmd->fd_out = get_fd(tok->next->string, OUT);
         if (cmd->fd_out < 0)
             return (1);
@@ -86,6 +92,8 @@ static int out_and_append(t_token *tok, t_cmd *cmd)
     {
         if (cmd->fd_out >= 0)
             close(cmd->fd_out);
+		if (tok->next == NULL)
+			return (1);
         cmd->fd_out = get_fd(tok->next->string, APPEND);
         if (cmd->fd_out < 0)
             return (1);
@@ -98,12 +106,12 @@ int get_outfile(t_token *tok, t_cmd *cmd)
     t_token *tmp;
 
     tmp = tok;
-    if (!out_and_append(tmp, cmd))
+    if (out_and_append(tmp, cmd))
         return (1);
     tmp = tmp->next;
-    while (tmp->type != PIPE)
+    while (tmp && tmp->type != PIPE)
     {
-        if (!out_and_append(tmp, cmd))
+        if (out_and_append(tmp, cmd))
             return (1);
         tmp = tmp->next;
     }

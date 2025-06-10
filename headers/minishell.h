@@ -111,6 +111,7 @@ int get_infile(t_token *tok, t_cmd *cmd);
 int get_outfile(t_token *tok, t_cmd *cmd);
 int	exec_builtins(int stou, t_controller *cont, char **args);
 int		prepare_builtin(t_controller *cont, t_cmd *cmd);
-int		check_cmd(char *path, t_controller *cont);
+int		check_cmd(t_controller *cont);
+char    *get_path(char *str_envp, t_cmdlist *cmdlist);
 
 #endif
