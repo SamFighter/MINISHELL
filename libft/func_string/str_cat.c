@@ -18,11 +18,11 @@
 void	str_cat(char *dst, const char *src)
 {
 	size_t	d_len;
-	size_t	s_len;
+//	size_t	s_len;
 	size_t	i;
 
 	d_len = str_len((const char *)dst);
-	s_len = str_len(src);
+//	s_len = str_len(src);
 	i = 0;
 	while (src[i])
 	{

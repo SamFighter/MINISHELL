@@ -38,7 +38,7 @@ static int  read_prompt(int fd, char *str)
     return (0);
 }
 
-int here_doc(char *eof, t_controller *cont)
+int here_doc(char *eof)
 {
     int fd;
 

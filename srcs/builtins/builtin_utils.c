@@ -52,7 +52,7 @@ int		prepare_builtin(t_controller *cont, t_cmd *cmd)
 	  stout = dup(1);
 	  dup2(cmd->fd_out, 1);
 	}
-	exec_builtin(stout, cont, cmd);
+	exec_builtins(stout, cont, cmd->cmd_args);
 	if (cmd->fd_out >= 0)
 	{
 	  dup2(stout, 1);

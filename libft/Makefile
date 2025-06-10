@@ -80,9 +80,7 @@ DEPS			:=	$(M_OBJS:%.o=%.d)
 
 CC				:=	cc
 CFLAGS			:=	-Wall -Wextra -Werror -g
-CPPFLAGS		:=	-MP -MMD -Iheaders/minishell.h	\
-					-Iheaders/tokenizer.h			\
-					-Ilibft/debug.h					\
+CPPFLAGS		:=	-MP -MMD -Ilibft/debug.h		\
 					-Ilibft/headers/func_cnv.h		\
 					-Ilibft/headers/func_ctn.h		\
 					-Ilibft/headers/func_mem.h		\

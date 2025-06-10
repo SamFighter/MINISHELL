@@ -12,7 +12,7 @@
 
 #include "../../headers/minishell.h"
 
-void    redir_in_out(t_controller *cont, t_cmd *cmd, int *pipe)
+void    redir_in_out(t_controller *cont, t_cmd *cmd, int *pip)
 {
 	close(pip[0]);
 	if (cmd->fd_inf >= 0)
@@ -25,7 +25,7 @@ void    redir_in_out(t_controller *cont, t_cmd *cmd, int *pipe)
 		dup2(cmd->fd_out, 1);
 		close(cmd->fd_out);
 	}
-	else if (cmd->next != data->cmdlist->cmds)
+	else if (cmd->next != cont->cmdlist.cmds)
 		dup2(pip[1], 1);
 	close(pip[1]);
 }

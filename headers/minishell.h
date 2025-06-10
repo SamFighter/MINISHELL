@@ -15,6 +15,7 @@
 
 # include "../libft/headers/libft.h"
 # include "tokenizer.h"
+# include <unistd.h>
 # include <limits.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -103,9 +104,13 @@ char	*env_cut(char *str);
 char	*exportation(char *str, t_controller *cont);
 bool    search_pipe(t_token *tok);
 int		exec(t_controller *cont);
-int 	exec_cmd(t_controller *cont);
 bool    search_pipe(t_token *tok);
-int		here_doc(char *eof, t_controller *cont);
+int		here_doc(char *eof);
 void	redir_in_out(t_controller *cont, t_cmd *cmd, int *pip);
+int get_infile(t_token *tok, t_cmd *cmd);
+int get_outfile(t_token *tok, t_cmd *cmd);
+int	exec_builtins(int stou, t_controller *cont, char **args);
+int		prepare_builtin(t_controller *cont, t_cmd *cmd);
+int		check_cmd(char *path, t_controller *cont);
 
 #endif

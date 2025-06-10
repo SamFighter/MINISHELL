@@ -19,9 +19,7 @@ void	cmd_toarr(t_cmdlist **cmdlist, char **env)
 {
 	t_cmd	*cmds;
 	t_token	*tk;
-	int		i;
 
-	i = 0;
 	cmds = (*cmdlist)->cmds;
 	tk = cmds->tokens;
 	while (tk)
@@ -30,7 +28,6 @@ void	cmd_toarr(t_cmdlist **cmdlist, char **env)
 		{
 			cmds = cmds->next;
 			tk = cmds->tokens;
-			i = 0;
 		}
 		if (tk->type == CMD)
 			cmds->str_cmd = str_dup(tk->string);

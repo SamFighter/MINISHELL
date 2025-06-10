@@ -55,17 +55,17 @@ MANDATORY	= 		srcs/main.c 									\
 					srcs/exec/envp_controller.c						\
 					srcs/exec/exec.c								\
 					srcs/exec/exec_utils.c							\
-					# srcs/exec/cmd_fd.c							\
+					srcs/exec/cmd_fd.c								\
 
 N_OBJS		=	$(MANDATORY:%.c=.build/%.o)
 DEPS		=	$(N_OBJS:%.o=%.d)
 
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror -g
-CPPFLAGS	=	-MP	-MMD -Iinclude									\
-				-Ilibft/libft.a										\
-				-Iheaders/minishell.h								\
-				-Iheaders/debug.h									\
+CPPFLAGS	=	-MP	-MMD -Iheaders									\
+#				-Ilibft/libft.a										\
+#				-Iheaders/minishell.h								\
+#				-Iheaders/debug.h									\
 
 LDFLAGS		=	-Llibft -lft -lreadline
 

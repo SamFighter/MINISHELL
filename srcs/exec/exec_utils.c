@@ -76,8 +76,7 @@ int	exec_builtins(int stou, t_controller *cont, char **args)
 		cont->excode = ft_pwd();
 	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "unset", INT_MAX))
 		cont->excode = ft_unset(args, cont);
-	else
-		return (0);
+	return (0);
 }
 
 bool    search_pipe(t_token *tok)
@@ -99,8 +98,8 @@ int		check_cmd(char *path, t_controller *cont)
 	char *abs_path;
 
 	path = env_cut(search_envp("PATH=", cont->env));
-	abs_path = get_path(path, cont->cmdlist);
-	if (abs_path == cont->cmdlist.cmds->str_cmd)i
+	abs_path = get_path(path, &cont->cmdlist);
+	if (abs_path == cont->cmdlist.cmds->str_cmd)
 	{
 		ft_printf("%s : command not found", abs_path);
 		return (-1);
