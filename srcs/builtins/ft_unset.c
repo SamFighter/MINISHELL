@@ -12,50 +12,64 @@
 
 #include "../../headers/minishell.h"
 
-static int  check_syntax(char *str)
+static int check_syntax(char *str)
 {
     int i;
 
-    if (str[0] == '_' && !ctn_isalpha(str[0]))
+    if (!str || (!ctn_isalpha(str[0]) && str[0] != '_'))
         return (1);
-    i = 0;
+    i = 1;
     while (str[i])
     {
-        if (str[i] == '_' && !ctn_isalnum(str[i]))
+        if (!ctn_isalnum(str[i]) && str[i] != '_')
             return (1);
         i++;
     }
     return (0);
 }
 
-static int  check_alr_env(char **env, char *str)
+static int check_alr_env(char **env, char *str)
 {
     int i;
     int j;
+    int len;
 
     if (!env || !str)
         return (-1);
-    i = 0;
-    while (str[i])
-        i++;
+    len = str_len(str);
     j = 0;
     while (env[j])
     {
-        if (!str_ncmp(env[j], str, i))
+        i = 0;
+        while (env[j][i] && env[j][i] != '=' && i < len)
+            i++;
+        if (i == len && !str_ncmp(env[j], str, len))
             return (j);
         j++;
     }
     return (-1);
 }
 
+static void remove_env_var(char **env, int pos)
+{
+    int i;
+
+    free(env[pos]);
+    i = pos;
+    while (env[i])
+    {
+        env[i] = env[i + 1];
+        i++;
+    }
+}
+
 static bool unset(t_controller *cont, char *str)
 {
-    int j;
     int pos;
 
     if (!str)
         return (false);
-    if (!check_syntax(str))
+    if (check_syntax(str))
     {
         ft_printf("unset : invalid indentifier\n");
         return (true);
@@ -63,13 +77,11 @@ static bool unset(t_controller *cont, char *str)
     pos = check_alr_env(cont->env, str);
     if (pos == -1)
         return (false);
-    j = 0;
-    while (j < pos)
-        j++;
-    free(cont->env[j]);
-    cont->env[j] = NULL;
+	else
+		remove_env_var(cont->env, pos);
     return (false);
 }
+
 /**
  * @brief Same functionnality as the unset Built-in
  * 

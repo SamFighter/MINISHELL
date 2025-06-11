@@ -109,9 +109,10 @@ int		here_doc(char *eof);
 void	redir_in_out(t_controller *cont, t_cmd *cmd, int *pip);
 int get_infile(t_token *tok, t_cmd *cmd);
 int get_outfile(t_token *tok, t_cmd *cmd);
-int	exec_builtins(int stou, t_controller *cont, char **args);
+int exec_builtins(int stou, t_controller *cont, char *cmd_name, char **args);
 int		prepare_builtin(t_controller *cont, t_cmd *cmd);
 int		check_cmd(t_controller *cont);
 char    *get_path(char *str_envp, t_cmdlist *cmdlist);
+int		len_cmd(t_cmd *cmd);
 
 #endif

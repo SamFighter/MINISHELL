@@ -17,6 +17,7 @@ static void error_heredoc(char *str)
     ft_printf("warning: here-document delimited by end-of-file");
     ft_printf("(wanted '%s')\n", str);
 }
+
 static int  read_prompt(int fd, char *str)
 {
     char    *prompt;

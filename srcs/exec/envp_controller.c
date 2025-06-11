@@ -17,34 +17,28 @@ int    dup_env(t_controller *cont, char **envp)
     if (!(*envp))
 		return (make_env(cont)); 
 	cont->env = str_arrdup(envp);
-	cont->pwd = env_cut(search_envp("PWD=", cont->env));
-	cont->old_pwd = env_cut(search_envp("OLDPWD=", cont->env));
+	cont->pwd = env_cut(search_envp("PWD", cont->env));
+	cont->old_pwd = env_cut(search_envp("OLDPWD", cont->env));
 	return (0);
 }
 
 char	*search_envp(char *str, char **envp)
 {
-	int		y;
-	char	*s;
-	
+	int		i;
+	int		len;
+
 	if (!str || !envp)
 		return (NULL);
 	if (str[0] == '$')
-		s = str_substr(str, 1, str_len(str) - 1);
-	else
-		s = str_dup(str);
-	y = 0;
-	while (envp[y])
+		str++;
+	len = str_len(str);
+	i = 0;
+	while (envp[i])
 	{
-		if (!str_str(envp[y], s))
-			y++;
-		else if (str_str(envp[y], s))
-		{
-			s = str_dup(envp[y]);
-			return (s);
-		}
+		if (!str_ncmp(envp[i], str, len) && envp[i][len] == '=')
+			return (envp[i] + len + 1);
+		i++;
 	}
-	free (s);
 	return (NULL);
 }
 

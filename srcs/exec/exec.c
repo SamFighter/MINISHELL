@@ -12,37 +12,27 @@
 
 #include "../../headers/minishell.h"
 
-static void		built(int *pip, t_cmd *cmd, t_controller *cont)
-{
-	close(pip[0]);
-	if (cmd->fd_out < 0 && cmd->next != cont->cmdlist.cmds)
-		cmd->fd_out = pip[1];
-	else
-		close(pip[1]);
-	prepare_builtin(cont, cmd);
-}
 
-static void  exec_child(t_controller *cont, t_cmd *cmd, int *pip)
+static void exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 {
-  char  *path;
+	char *path;
 
-  path = NULL;
-  if (is_builtin(cmd))
-	  built(pip, cmd, cont);
-  else 
-  {
-	path = get_path(env_cut(search_envp("PATH=", cont->env)), &cont->cmdlist);
-	if (check_cmd(cont) == -1)
+	if (is_builtin(cmd))
+	{
+		redir_in_out(cont, cmd, pip);
+		prepare_builtin(cont, cmd);
+		exit(0);
+	}
+	path = get_path(search_envp("PATH", cont->env), &cont->cmdlist);
+	if (!path || check_cmd(cont) == -1)
 	{
 		perror("command not found");
 		exit(EXIT_FAILURE);
 	}
 	redir_in_out(cont, cmd, pip);
-	rl_clear_history();
 	execve(path, cmd->cmd_args, cont->env);
-  }
-  if (path)
-	  free(path);
+	perror("execve failed");
+	exit(EXIT_FAILURE);
 }
 
 static void		exec_parent(t_cmd *cmd, int *pip)
@@ -64,7 +54,7 @@ static void		exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 	if (g_sig < 0)
 		perror("fork failed");
 	else if (!g_sig)
-	{
+	{	
 	  if (cmd && cmd->cmd_args && cmd->cmd_args[0])
 			exec_child(cont, cmd, pip);
 	  else
@@ -74,30 +64,50 @@ static void		exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 		exec_parent(cmd, pip);
 }
 
-int		exec(t_controller *cont)
+static void		wait_process(t_controller *cont, t_cmd *cmd)
 {
-	t_cmd	*cmd;
-	int		*pip;
+	int status;
+	int pid;
+	int len;
 
-	pip = cont->pip;
+	len = len_cmd(cmd);
+	while (len--)
+	{
+		pid = waitpid(-1, &status, 0);
+		if (pid == g_sig && WIFEXITED(status))
+			cont->excode = WEXITSTATUS(status);
+		if (cmd->fd_out >= 0)
+			close(cmd->fd_out);
+		if (cmd->fd_inf >= 0)
+			close(cmd->fd_inf);
+		cmd = cmd->next;
+	}
+}
+
+int exec(t_controller *cont)
+{
+	t_cmd *cmd;
+	int *pip;
+
 	cmd = cont->cmdlist.cmds;
-	if (is_builtin(cmd))
+	if (is_builtin(cmd) && !search_pipe(cont->cmdlist.tokens))
 		return (prepare_builtin(cont, cmd));
+	pip = cont->pip;
 	if (pipe(pip) == -1)
 		return (1);
 	exec_cmd(cont, cmd, pip);
 	cmd = cmd->next;
 	if (!cmd)
-	  return (1);
+		return (1);
 	if (cmd->next == NULL)
-      cmd->next = cmd;
+		cmd->next = cmd;
 	while (cmd != cont->cmdlist.cmds)
 	{
 		if (pipe(pip) == -1)
-		  return (-1);
+			return (-1);
 		exec_cmd(cont, cmd, pip);
-		if (cmd->next != NULL)
-			cmd = cmd->next;
+		cmd = cmd->next;
 	}
+	wait_process(cont, cmd);
 	return (0);
 }

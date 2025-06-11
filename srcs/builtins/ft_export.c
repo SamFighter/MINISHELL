@@ -102,17 +102,17 @@ int	ft_export(t_controller *cont, char **args)
 {
 	int	j;
 
-	j = 1;
-	if (!args || args[j])
+	j = 0;
+	if (!args || !args[j])
 	{
-		if (cont->env && !export_no_args(cont))
+		if (cont->env && export_no_args(cont))
 			ft_printf("export: invalid identifier\n");
 		cont->excode = 0;
 		return (cont->excode);
 	}
 	while (args[j])
 	{
-		if(!syntax_export(args[j]))
+		if(syntax_export(args[j]) != 0)
 		{
 			ft_printf("export: invalid identifier\n");
 			cont->excode = 1;

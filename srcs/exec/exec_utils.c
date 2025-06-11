@@ -12,6 +12,32 @@
 
 #include "../../headers/minishell.h"
 
+
+static char *build_path(char *env_path, int end, int start, char *cmd)
+{
+    char *dir;
+    char *tmp;
+    char *full_path;
+    int len;
+
+    len = start - end;
+    dir = str_substr(env_path, end, len);
+    if (!dir)
+        return (NULL);
+    tmp = str_join(dir, "/");
+    free(dir);
+    if (!tmp)
+        return (NULL);
+    if (check_path(tmp, cmd) == 0)
+    {
+        full_path = str_join(tmp, cmd);
+        free(tmp);
+        return (full_path);
+    }
+    free(tmp);
+    return (NULL);
+}
+
 /**
  * @param str_envp 
  * @param cmdlist 
@@ -22,7 +48,6 @@ char *get_path(char *str_envp, t_cmdlist *cmdlist)
     char *path;
     int start;
     int end;
-    int len;
 
     if (!str_envp)
         return (str_dup("./"));
@@ -32,14 +57,11 @@ char *get_path(char *str_envp, t_cmdlist *cmdlist)
     {
         if (str_envp[start] == ':' || str_envp[start + 1] == '\0')
         {
-            len = start - end;
-            path = str_substr(str_envp, end, len);
-            if (!path)
-                return NULL;
-            path[len] = '/';
-            if (check_path(path, cmdlist->cmds->str_cmd) == 0)
-                return str_join(path, cmdlist->cmds->str_cmd);
-            free(path);
+            if (str_envp[start + 1] == '\0')
+                start++;
+            path = build_path(str_envp, end, start, cmdlist->cmds->str_cmd);
+            if (path != NULL)
+                return (path);
             end = start + 1;
         }
         start++;
@@ -56,34 +78,17 @@ int	check_path(char *path, char *cmd)
 {
 	char	*full_path;
 	int		result;
+	int		len;
 
 	result = 1;
+	len = str_len(path);
+	if (path[len - 1] != '/')
+		path = str_join(path, "/");
 	full_path = str_join(path, cmd);
-	if (!access(full_path, X_OK))
+	if (full_path && access(full_path, X_OK) == 0)
 		result = 0;
 	free(full_path);
 	return (result);
-}
-/**
- * @param cont 
- * @param args 
- */
-int	exec_builtins(int stou, t_controller *cont, char **args)
-{
-	(void) stou;
-	if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "cd", INT_MAX))
-		cont->excode = ft_cd(args, cont);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "echo", INT_MAX))
-		cont->excode = ft_echo(args);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "env", INT_MAX))
-		cont->excode = ft_env(cont);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "export", INT_MAX))
-		cont->excode = ft_export(cont, args);
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "pwd", INT_MAX))
-		cont->excode = ft_pwd();
-	else if (!str_ncmp(cont->cmdlist.cmds->str_cmd, "unset", INT_MAX))
-		cont->excode = ft_unset(args, cont);
-	return (0);
 }
 
 bool    search_pipe(t_token *tok)
@@ -105,7 +110,7 @@ int		check_cmd(t_controller *cont)
 	char	*abs_path;
 	char	*path_env;
 
-	path_env = env_cut(search_envp("PATH=", cont->env));
+	path_env = env_cut(search_envp("PATH", cont->env));
 	abs_path = get_path(path_env, &cont->cmdlist);
 	free(path_env);
 	if (abs_path == cont->cmdlist.cmds->str_cmd)

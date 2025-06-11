@@ -73,6 +73,11 @@ int	ft_echo(char **args)
 	bool	new_line;
 
 	len = 0;
+	if (args == NULL)
+	{
+		ft_printf("\n");
+		return (0);
+	}
 	while (args[len])
 		len++;
 	y = 0;
