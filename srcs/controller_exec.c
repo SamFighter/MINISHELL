@@ -19,10 +19,17 @@ void	invalid_print(t_controller *controller);
  */
 void	controller_exec(t_controller *controller)
 {
+	t_cmd	*curr_cmd;
+
+	curr_cmd = controller->cmdlist.cmds;
 	// if (controller->cmdlist.invalid != 0)
 	// 	invalid_print(controller);
 	// else
-	controller->cmdlist.cmds->cmd_args = str_rarrdup_nset(controller->cmdlist.cmds->args, controller->cmdlist.cmds->str_cmd);
+	while (curr_cmd)
+	{
+		curr_cmd->cmd_args = str_rarrdup_nset(curr_cmd->args, curr_cmd->str_cmd);
+		curr_cmd = curr_cmd->next;
+	}
 	exec(controller);
 }
 

@@ -12,23 +12,28 @@
 
 #include "../../headers/minishell.h"
 
-
-void    redir_in_out(t_controller *cont, t_cmd *cmd, int *pip)
+void	redir_in_out(t_controller *cont, t_cmd *cmd, int *pip)
 {
-	close(pip[0]);
-	if (cmd->fd_inf >= 0)
+	(void)cont;
+	if (cmd->fd_inf > 2)
 	{
-		dup2(cmd->fd_inf, 0);
+		dup2(cmd->fd_inf, STDIN_FILENO);
 		close(cmd->fd_inf);
 	}
-	if (cmd->fd_out >= 0)
+	if (cmd->fd_out > 2)
 	{
-		dup2(cmd->fd_out, 1);
+		dup2(cmd->fd_out, STDOUT_FILENO);
 		close(cmd->fd_out);
 	}
-	else if (cmd->next && cmd->next != cont->cmdlist.cmds && pip[1] >= 0)
-		dup2(pip[1], 1);
-	close(pip[1]);
+	else if (pip != NULL)
+	{
+		dup2(pip[1], STDOUT_FILENO);
+	}
+	if (pip != NULL)
+	{
+		close(pip[0]);
+		close(pip[1]);
+	}
 }
 
 int	len_cmd(t_cmd *cmd)

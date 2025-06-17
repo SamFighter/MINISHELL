@@ -1,113 +1,92 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                           :+:      :+:    :+:   */
+/*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 16:47:28 by samfighter        #+#    #+#             */
-/*   Updated: 2025/06/02 16:49:12 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/06/17 11:06:01 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-
-static void exec_child(t_controller *cont, t_cmd *cmd, int *pip)
+void	handle_exec_error(char *path, char *path_env, int *pip)
 {
-	char *path;
-
-	if (is_builtin(cmd))
+	if (pip)
 	{
-		redir_in_out(cont, cmd, pip);
-		prepare_builtin(cont, cmd);
-		exit(0);
-	}
-	path = get_path(search_envp("PATH", cont->env), &cont->cmdlist);
-	if (!path || check_cmd(cont) == -1)
-	{
-		perror("command not found");
-		exit(EXIT_FAILURE);
-	}
-	redir_in_out(cont, cmd, pip);
-	execve(path, cmd->cmd_args, cont->env);
-	perror("execve failed");
-	exit(EXIT_FAILURE);
-}
-
-static void		exec_parent(t_cmd *cmd, int *pip)
-{
-	close(pip[1]);
-	if (cmd->fd_inf >= 0)
-		close(cmd->fd_inf);
-	if (cmd->fd_inf == -2)
-		cmd->fd_inf = pip[0];
-	if (cmd->next && cmd->next != cmd && cmd->next->fd_inf == -2)
-		cmd->fd_inf = pip[0];
-	else
 		close(pip[0]);
-}
-
-static void		exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
-{
-	g_sig = fork();
-	if (g_sig < 0)
-		perror("fork failed");
-	else if (!g_sig)
-	{	
-	  if (cmd && cmd->cmd_args && cmd->cmd_args[0])
-			exec_child(cont, cmd, pip);
-	  else
-			perror("empty command");
+		close(pip[1]);
 	}
-	else
-		exec_parent(cmd, pip);
+	if (path)
+		free(path);
+	if (path_env)
+		free(path_env);
+	exit(127);
 }
 
-static void		wait_process(t_controller *cont, t_cmd *cmd)
+static void	wait_process(t_controller *cont, t_cmd *start_cmd)
 {
-	int status;
-	int pid;
-	int len;
+	int	status;
+	int	pid;
+	int	cmd_count;
 
-	len = len_cmd(cmd);
-	while (len--)
+	cmd_count = len_cmd(start_cmd);
+	while (cmd_count > 0)
 	{
 		pid = waitpid(-1, &status, 0);
-		if (pid == g_sig && WIFEXITED(status))
-			cont->excode = WEXITSTATUS(status);
-		if (cmd->fd_out >= 0)
-			close(cmd->fd_out);
-		if (cmd->fd_inf >= 0)
-			close(cmd->fd_inf);
+		if (pid > 0)
+			handle_child_status(cont, pid, status);
+		cmd_count--;
+	}
+}
+
+static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
+{
+	if (is_builtin(cmd) && !cmd->next)
+	{
+		return (prepare_builtin(cont, cmd));
+	}
+	return (-1);
+}
+
+static void	exec_pipeline(t_controller *cont)
+{
+	t_cmd	*cmd;
+	int		pip[2];
+	int		*current_pipe;
+
+	cmd = cont->cmdlist.cmds;
+	while (cmd)
+	{
+		current_pipe = NULL;
+		if (cmd->next)
+		{
+			if (pipe(pip) == -1)
+			{
+				perror("pipe");
+				return ;
+			}
+			current_pipe = pip;
+		}
+		exec_cmd(cont, cmd, current_pipe);
 		cmd = cmd->next;
 	}
 }
 
-int exec(t_controller *cont)
+int	exec(t_controller *cont)
 {
-	t_cmd *cmd;
-	int *pip;
+	t_cmd	*cmd;
+	int		builtin_result;
 
 	cmd = cont->cmdlist.cmds;
-	if (is_builtin(cmd) && !search_pipe(cont->cmdlist.tokens))
-		return (prepare_builtin(cont, cmd));
-	pip = cont->pip;
-	if (pipe(pip) == -1)
-		return (1);
-	exec_cmd(cont, cmd, pip);
-	cmd = cmd->next;
 	if (!cmd)
 		return (1);
-	if (cmd->next == NULL)
-		cmd->next = cmd;
-	while (cmd != cont->cmdlist.cmds)
-	{
-		if (pipe(pip) == -1)
-			return (-1);
-		exec_cmd(cont, cmd, pip);
-		cmd = cmd->next;
-	}
-	wait_process(cont, cmd);
-	return (0);
+	builtin_result = handle_single_builtin(cont, cmd);
+	if (builtin_result != -1)
+		return (builtin_result);
+	exec_pipeline(cont);
+	wait_process(cont, cont->cmdlist.cmds);
+	return (cont->excode);
 }

@@ -46,7 +46,7 @@ int here_doc(char *eof)
     fd = open(".tmp_heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0644);
     if (fd < 0)
         return (-1);
-    if (!read_prompt(fd, eof))
+    if (read_prompt(fd, eof))
     {
         unlink(".tmp_heredoc");
         return (-1);

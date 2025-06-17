@@ -112,7 +112,11 @@ int get_outfile(t_token *tok, t_cmd *cmd);
 int exec_builtins(int stou, t_controller *cont, char *cmd_name, char **args);
 int		prepare_builtin(t_controller *cont, t_cmd *cmd);
 int		check_cmd(t_controller *cont);
-char    *get_path(char *str_envp, t_cmdlist *cmdlist);
+char    *get_path(char *str_envp, t_cmd *cmd);
 int		len_cmd(t_cmd *cmd);
+char	*search_in_path(char *str_envp, char *cmd);
+void	handle_child_status(t_controller *cont, int pid, int status);
+void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip);
+void	handle_exec_error(char *path, char *path_env, int *pip);
 
 #endif

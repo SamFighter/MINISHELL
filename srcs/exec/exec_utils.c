@@ -12,114 +12,68 @@
 
 #include "../../headers/minishell.h"
 
-
-static char *build_path(char *env_path, int end, int start, char *cmd)
+static char	*create_full_path(char *dir, char *cmd)
 {
-    char *dir;
-    char *tmp;
-    char *full_path;
-    int len;
-
-    len = start - end;
-    dir = str_substr(env_path, end, len);
-    if (!dir)
-        return (NULL);
-    tmp = str_join(dir, "/");
-    free(dir);
-    if (!tmp)
-        return (NULL);
-    if (check_path(tmp, cmd) == 0)
-    {
-        full_path = str_join(tmp, cmd);
-        free(tmp);
-        return (full_path);
-    }
-    free(tmp);
-    return (NULL);
-}
-
-/**
- * @param str_envp 
- * @param cmdlist 
- * @return char* 
- */
-char *get_path(char *str_envp, t_cmdlist *cmdlist)
-{
-    char *path;
-    int start;
-    int end;
-
-    if (!str_envp)
-        return (str_dup("./"));
-    start = 0;
-    end = 0;
-    while (str_envp[start])
-    {
-        if (str_envp[start] == ':' || str_envp[start + 1] == '\0')
-        {
-            if (str_envp[start + 1] == '\0')
-                start++;
-            path = build_path(str_envp, end, start, cmdlist->cmds->str_cmd);
-            if (path != NULL)
-                return (path);
-            end = start + 1;
-        }
-        start++;
-    }
-    return (str_dup(cmdlist->cmds->str_cmd));
-}
-
-/**
- * @param path 
- * @param cmd 
- * @return int 
- */
-int	check_path(char *path, char *cmd)
-{
+	char	*tmp;
 	char	*full_path;
-	int		result;
+
+	tmp = str_join(dir, "/");
+	if (!tmp)
+		return (NULL);
+	full_path = str_join(tmp, cmd);
+	free(tmp);
+	return (full_path);
+}
+
+static char	*build_path(char *env_path, int start, int end, char *cmd)
+{
+	char	*dir;
+	char	*full_path;
 	int		len;
 
-	result = 1;
-	len = str_len(path);
-	if (path[len - 1] != '/')
-		path = str_join(path, "/");
-	full_path = str_join(path, cmd);
-	if (full_path && access(full_path, X_OK) == 0)
-		result = 0;
+	len = end - start;
+	if (len <= 0)
+		return (NULL);
+	dir = str_substr(env_path, start, len);
+	if (!dir)
+		return (NULL);
+	full_path = create_full_path(dir, cmd);
+	free(dir);
+	if (!full_path)
+		return (NULL);
+	if (access(full_path, F_OK) == 0 && access(full_path, X_OK) == 0)
+		return (full_path);
 	free(full_path);
-	return (result);
+	return (NULL);
 }
 
-bool    search_pipe(t_token *tok)
+char	*search_in_path(char *str_envp, char *cmd)
 {
-    t_token *tmp;
-    
-    tmp = tok;
-    while (tmp)
-    {
-        if (tmp->type == PIPE)
-            return (true);
-        tmp = tmp->next;
-    }
-    return (false);
-}
+	char	*path;
+	int		i;
+	int		start;
 
-int		check_cmd(t_controller *cont)
-{
-	char	*abs_path;
-	char	*path_env;
-
-	path_env = env_cut(search_envp("PATH", cont->env));
-	abs_path = get_path(path_env, &cont->cmdlist);
-	free(path_env);
-	if (abs_path == cont->cmdlist.cmds->str_cmd)
+	i = 0;
+	start = 0;
+	while (str_envp[i])
 	{
-		ft_printf("%s : command not found", abs_path);
-		if (abs_path != NULL)
-			free(abs_path);
-		return (-1);
+		if (str_envp[i] == ':' || str_envp[i + 1] == '\0')
+		{
+			if (str_envp[i + 1] == '\0')
+				i++;
+			path = build_path(str_envp, start, i, cmd);
+			if (path != NULL)
+				return (path);
+			start = i + 1;
+		}
+		i++;
 	}
-	free(abs_path);
-	return (0);
+	return (NULL);
+}
+
+char	*get_path(char *str_envp, t_cmd *cmd)
+{
+	if (!str_envp || !cmd || !cmd->str_cmd)
+		return (NULL);
+	return (search_in_path(str_envp, cmd->str_cmd));
 }

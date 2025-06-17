@@ -14,7 +14,9 @@
 
 char *env_cut(char *str)
 {
-	int i = 0;
+	int i;
+
+	i = 0;
 	while (str[i] && str[i] != '=')
 		i++;
 	if (str[i] == '=')
