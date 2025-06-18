@@ -6,7 +6,7 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 	char	*path;
 	char	*path_env;
 
-	redir_in_out(cont, cmd, pip);
+	redir_in_out(cmd, pip);
 	if (is_builtin(cmd))
 		exit(prepare_builtin(cont, cmd));
 	path_env = search_envp("PATH", cont->env);
@@ -15,14 +15,11 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 	{
 		utl_putstr_fd(cmd->str_cmd, 2);
 		utl_putstr_fd(": command not found\n", 2);
-		free(path_env);
 		exit(127);
 	}
 	execve(path, cmd->cmd_args, cont->env);
 	perror(path);
 	free(path);
-	if (path_env)
-		free(path_env);
 	exit(126);
 }
 
@@ -38,6 +35,8 @@ static void	exec_parent(t_cmd *cmd, int *pip)
 	}
 	if (cmd->fd_inf > 2)
 		close(cmd->fd_inf);
+	if (cmd->fd_out > 2)
+		close(cmd->fd_out);
 }
 
 

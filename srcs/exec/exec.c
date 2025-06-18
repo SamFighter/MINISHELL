@@ -44,11 +44,28 @@ static void	wait_process(t_controller *cont, t_cmd *start_cmd)
 
 static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
 {
-	if (is_builtin(cmd) && !cmd->next)
+	int	stdin_copy;
+	int	stdout_copy;
+	int	result;
+
+	if (!is_builtin(cmd) || cmd->next)
+		return (-1);
+	stdin_copy = dup(STDIN_FILENO);
+	stdout_copy = dup(STDOUT_FILENO);
+	if (redir_in_out(cmd, NULL) == -1)
 	{
-		return (prepare_builtin(cont, cmd));
+		dup2(stdin_copy, STDIN_FILENO);
+		dup2(stdout_copy, STDOUT_FILENO);
+		close(stdin_copy);
+		close(stdout_copy);
+		return (1);
 	}
-	return (-1);
+	result = prepare_builtin(cont, cmd);
+	dup2(stdin_copy, STDIN_FILENO);
+	dup2(stdout_copy, STDOUT_FILENO);
+	close(stdin_copy);
+	close(stdout_copy);
+	return (result);
 }
 
 static void	exec_pipeline(t_controller *cont)
@@ -81,7 +98,7 @@ int	exec(t_controller *cont)
 	int		builtin_result;
 
 	cmd = cont->cmdlist.cmds;
-	if (!cmd)
+	if (!cmd || !cmd->str_cmd)
 		return (1);
 	builtin_result = handle_single_builtin(cont, cmd);
 	if (builtin_result != -1)

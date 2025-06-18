@@ -30,75 +30,48 @@ static int  get_fd(char *filename, int type)
     return (fd);
 }
 
-static int  in_and_heredoc(t_token *tok, t_cmd *cmd)
+static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 {
-    if (tok->type == IN)
-    {
-        if (cmd->fd_inf >= 0)
-            close(cmd->fd_inf);
-		if (tok->next == NULL)
-			return (1);
-        cmd->fd_inf = get_fd(tok->next->string, IN);
-        if (cmd->fd_inf < 0)
-            return (1);
-    }
-    else if (tok->type == HEREDOC)
+	if (cmd->fd_inf >= 0)
+		close(cmd->fd_inf);
+	if (tok->next == NULL)
+		return (1);
+	cmd->fd_inf = get_fd(tok->next->string, type);
+	if (cmd->fd_inf < 0)
+		return (1);
+	return (0);
+}
+
+int	get_infile(t_token *tok, t_cmd *cmd)
+{
+	t_token	*tmp;
+
+	tmp = tok;
+	while (tmp && tmp->type != PIPE)
 	{
-		if (cmd->fd_inf >= 0)
-			close(cmd->fd_inf);
-		if (tok == tok->next)
-			return (1);
-		if (tok->next == NULL)
-			return (1);
-		cmd->fd_inf = get_fd(tok->next->string, HEREDOC);
-		if (cmd->fd_inf == -1)
-			return (1);
+		if (tmp->type == IN || tmp->type == HEREDOC)
+		{
+			if (!tmp->next || tmp->next->type != CMD)
+				return (1);
+			if (handle_input_redirect(tmp, cmd, tmp->type))
+				return (1);
+			tmp = tmp->next;
+		}
+		tmp = tmp->next;
 	}
 	return (0);
 }
 
-int get_infile(t_token *tok, t_cmd *cmd)
+static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 {
-    t_token *tmp;
-
-    tmp = tok;
-    if (in_and_heredoc(tmp, cmd))
-        return (1);
-    if (tmp->type == PIPE)
-        return (0);
-    tmp = tmp->next;
-    while (tmp && tmp->type != PIPE)
-    {
-        if (in_and_heredoc(tmp, cmd))
-            return (1);
-        tmp = tmp->next;
-    }
-    return (0);
-}
-
-static int out_and_append(t_token *tok, t_cmd *cmd)
-{
-    if (tok->type == OUT)
-    {
-        if (cmd->fd_out >= 0)
-            close(cmd->fd_out);
-	  	if (tok->next == NULL)
-			return (1);
-        cmd->fd_out = get_fd(tok->next->string, OUT);
-        if (cmd->fd_out < 0)
-            return (1);
-    }
-    else if (tok->type == APPEND)
-    {
-        if (cmd->fd_out >= 0)
-            close(cmd->fd_out);
-		if (tok->next == NULL)
-			return (1);
-        cmd->fd_out = get_fd(tok->next->string, APPEND);
-        if (cmd->fd_out < 0)
-            return (1);
-    }
-    return (0);
+	if (cmd->fd_out >= 0)
+		close(cmd->fd_out);
+	if (tok->next == NULL)
+		return (1);
+	cmd->fd_out = get_fd(tok->next->string, type);
+	if (cmd->fd_out < 0)
+		return (1);
+	return (0);
 }
 
 int get_outfile(t_token *tok, t_cmd *cmd)
@@ -106,13 +79,16 @@ int get_outfile(t_token *tok, t_cmd *cmd)
     t_token *tmp;
 
     tmp = tok;
-    if (out_and_append(tmp, cmd))
-        return (1);
-    tmp = tmp->next;
     while (tmp && tmp->type != PIPE)
     {
-        if (out_and_append(tmp, cmd))
-            return (1);
+        if (tmp->type == OUT || tmp->type == APPEND)
+        {
+            if (!tmp->next || tmp->next->type == PIPE || tmp->next->type == 0)
+                return (1);
+            if (handle_output_redirect(tmp, cmd, tmp->type))
+                return (1);
+            tmp = tmp->next;
+        }
         tmp = tmp->next;
     }
     return (0);

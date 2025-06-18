@@ -24,17 +24,21 @@ static int  read_prompt(int fd, char *str)
 
     while (1)
     {
-        prompt = NULL;
         prompt = readline("> ");
         if (!prompt)
+        {
             error_heredoc(str);
-        if (!str_ncmp(str, prompt, INT_MAX))
-            break ;
+            return (-1);
+        }
+        if (!str_strcmp(str, prompt))
+        {
+            free(prompt);
+            break;
+        }
         write(fd, prompt, str_len(prompt));
         write(fd, "\n", 1);
         free(prompt);
     }
-    free(prompt);
     close(fd);
     return (0);
 }

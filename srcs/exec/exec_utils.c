@@ -47,28 +47,29 @@ static char	*build_path(char *env_path, int start, int end, char *cmd)
 	return (NULL);
 }
 
-char	*search_in_path(char *str_envp, char *cmd)
+char *search_in_path(char *str_envp, char *cmd)
 {
 	char	*path;
 	int		i;
 	int		start;
 
+	if (!str_envp || !cmd)
+		return (NULL);
 	i = 0;
 	start = 0;
 	while (str_envp[i])
 	{
-		if (str_envp[i] == ':' || str_envp[i + 1] == '\0')
+		if (str_envp[i] == ':')
 		{
-			if (str_envp[i + 1] == '\0')
-				i++;
 			path = build_path(str_envp, start, i, cmd);
-			if (path != NULL)
+			if (path)
 				return (path);
 			start = i + 1;
 		}
 		i++;
 	}
-	return (NULL);
+	path = build_path(str_envp, start, i, cmd);
+	return path;
 }
 
 char	*get_path(char *str_envp, t_cmd *cmd)
@@ -76,4 +77,23 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 	if (!str_envp || !cmd || !cmd->str_cmd)
 		return (NULL);
 	return (search_in_path(str_envp, cmd->str_cmd));
+}
+
+void process_commands(t_controller *controller)
+{
+    t_token *current_tok;
+    t_cmd *current_cmd;
+
+    current_tok = controller->cmdlist.cmds->tokens;
+    current_cmd = controller->cmdlist.cmds;
+    while (current_tok && current_cmd)
+    {
+        get_infile(current_tok, current_cmd);
+        get_outfile(current_tok, current_cmd);
+        while (current_tok && current_tok->type != PIPE)
+            current_tok = current_tok->next;
+        if (current_tok && current_tok->type == PIPE)
+            current_tok = current_tok->next;
+        current_cmd = current_cmd->next;
+    }
 }

@@ -12,43 +12,69 @@
 
 #include "../../headers/minishell.h"
 
-void	redir_in_out(t_controller *cont, t_cmd *cmd, int *pip)
+static int	handle_input_redirection(t_cmd *cmd)
 {
-	(void)cont;
-	if (cmd->fd_inf > 2)
+	if (cmd->fd_inf >= 0)
 	{
-		dup2(cmd->fd_inf, STDIN_FILENO);
+		if (dup2(cmd->fd_inf, STDIN_FILENO) == -1)
+		{
+			perror("dup2 input");
+			return (-1);
+		}
 		close(cmd->fd_inf);
 	}
-	if (cmd->fd_out > 2)
+	return (0);
+}
+
+static int	handle_output_redirection(t_cmd *cmd, int *pip)
+{
+	if (cmd->fd_out >= 0)
 	{
-		dup2(cmd->fd_out, STDOUT_FILENO);
+		if (dup2(cmd->fd_out, STDOUT_FILENO) == -1)
+		{
+			perror("dup2 output");
+			return (-1);
+		}
 		close(cmd->fd_out);
 	}
 	else if (pip != NULL)
 	{
-		dup2(pip[1], STDOUT_FILENO);
+		if (dup2(pip[1], STDOUT_FILENO) == -1)
+		{
+			perror("dup2 pipe");
+			return (-1);
+		}
 	}
+	return (0);
+}
+
+int	redir_in_out(t_cmd *cmd, int *pip)
+{
+	if (handle_input_redirection(cmd) == -1)
+		return (-1);
+	if (handle_output_redirection(cmd, pip) == -1)
+		return (-1);
 	if (pip != NULL)
 	{
 		close(pip[0]);
 		close(pip[1]);
 	}
+	return (0);
 }
 
 int	len_cmd(t_cmd *cmd)
 {
-    int		count;
-    t_cmd	*start;
+	int		count;
+	t_cmd	*start;
 
 	count = 0;
 	start = cmd;
-    if (!cmd)
-        return (0);
-    while (cmd && (count == 0 || cmd != start))
-    {
-        count++;
-        cmd = cmd->next;
-    }
-    return (count);
+	if (!cmd)
+		return (0);
+	while (cmd && (count == 0 || cmd != start))
+	{
+		count++;
+		cmd = cmd->next;
+	}
+	return (count);
 }

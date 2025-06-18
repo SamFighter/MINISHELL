@@ -12,20 +12,22 @@
 
 #include "../../headers/minishell.h"
 
-int    dup_env(t_controller *cont, char **envp)
+int dup_env(t_controller *cont, char **envp)
 {
-    if (!(*envp))
-		return (make_env(cont)); 
+	if (!(*envp))
+		return (make_env(cont));
 	cont->env = str_arrdup(envp);
-	cont->pwd = env_cut(search_envp("PWD", cont->env));
-	cont->old_pwd = env_cut(search_envp("OLDPWD", cont->env));
+	if (!cont->env)
+		return (1);
+	cont->pwd = env_cut(str_dup(search_envp("PWD", cont->env)));
+	cont->old_pwd = env_cut(str_dup(search_envp("OLDPWD", cont->env)));
 	return (0);
 }
 
-char	*search_envp(char *str, char **envp)
+char *search_envp(char *str, char **envp)
 {
-	int		i;
-	int		len;
+	int i;
+	int len;
 
 	if (!str || !envp)
 		return (NULL);
@@ -42,20 +44,22 @@ char	*search_envp(char *str, char **envp)
 	return (NULL);
 }
 
-int	make_env(t_controller *cont)
+int make_env(t_controller *cont)
 {
-	char	path[PATH_MAX];
-	char	*tmp;
+	char path[PATH_MAX];
+	char *tmp;
 
+	if (getcwd(path, PATH_MAX) == NULL)
+		exit(1);
 	tmp = str_dup("OLDPWD=");
-	if (!tmp || getcwd(path, PATH_MAX) == NULL)
-		exit (1);
-	cont->env = mem_calloc(3, sizeof (char *));
+	if (!tmp)
+		exit(1);
+	cont->env = mem_calloc(3, sizeof(char *));
 	if (!cont->env)
-		exit (1);
+		exit(1);
 	cont->env[0] = tmp;
 	cont->env[1] = str_join("PWD=", path);
 	if (!cont->env[1])
-		exit (1);
+		exit(1);
 	return (0);
 }

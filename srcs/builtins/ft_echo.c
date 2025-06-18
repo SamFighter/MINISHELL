@@ -52,13 +52,13 @@ static void print_echo(char **args, int len, int y, bool new_line)
 	}
 	while (y < len)
 	{
-		write(1, args[y], str_len(args[y]));
+		write(STDOUT_FILENO, args[y], str_len(args[y]));
 		if (y != len - 1)
-			write(1, " ", 1);
+			write(STDOUT_FILENO, " ", 1);
 		y++;
 	}
 	if (new_line)
-		write(1, "\n", 1);
+		write(STDOUT_FILENO, "\n", 1);
 }
 /**
  * @brief Print in the standard output the args
@@ -75,7 +75,7 @@ int	ft_echo(char **args)
 	len = 0;
 	if (args == NULL)
 	{
-		ft_printf("\n");
+		write(STDOUT_FILENO, "\n", 1);
 		return (0);
 	}
 	while (args[len])

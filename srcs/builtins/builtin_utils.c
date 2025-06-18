@@ -40,23 +40,26 @@ bool	is_builtin(t_cmd *cmd)
 	return (false);
 }
 
-int prepare_builtin(t_controller *cont, t_cmd *cmd)
+int	prepare_builtin(t_controller *cont, t_cmd *cmd)
 {
-    int stout;
+	int	stdout_backup;
+	int	result;
 
-    stout = -1;
-    if (cmd->fd_out >= 0)
-    {
-        stout = dup(1);
-        dup2(cmd->fd_out, 1);
-    }
-    exec_builtins(stout, cont, cmd->cmd_args[0], cmd->args);
-    if (cmd->fd_out >= 0)
-    {
-        dup2(stout, 1);
-        close(stout);
-    }
-    return (0);
+	stdout_backup = -1;
+	if (cmd->fd_out >= 0)
+	{
+		stdout_backup = dup(STDOUT_FILENO);
+		if (dup2(cmd->fd_out, STDOUT_FILENO) == -1)
+			return (1);
+		close(cmd->fd_out);
+	}
+	result = exec_builtins(cont, cmd->cmd_args[0], cmd->args);
+	if (stdout_backup >= 0)
+	{
+		dup2(stdout_backup, STDOUT_FILENO);
+		close(stdout_backup);
+	}
+	return (result);
 }
 
 /**
@@ -64,20 +67,19 @@ int prepare_builtin(t_controller *cont, t_cmd *cmd)
  * @param args 
  * @param cmd_name
  */
-int exec_builtins(int stou, t_controller *cont, char *cmd_name, char **args)
+int	exec_builtins(t_controller *cont, char *cmd_name, char **args)
 {
-    (void)stou;
-    if (!str_ncmp(cmd_name, "cd", INT_MAX))
-        cont->excode = ft_cd(args, cont);
-    else if (!str_ncmp(cmd_name, "echo", INT_MAX))
-        cont->excode = ft_echo(args);
-    else if (!str_ncmp(cmd_name, "env", INT_MAX))
-        cont->excode = ft_env(cont);
-    else if (!str_ncmp(cmd_name, "export", INT_MAX))
-        cont->excode = ft_export(cont, args);
-    else if (!str_ncmp(cmd_name, "pwd", INT_MAX))
-        cont->excode = ft_pwd();
-    else if (!str_ncmp(cmd_name, "unset", INT_MAX))
-        cont->excode = ft_unset(args, cont);
-    return (0);
+	if (!str_ncmp(cmd_name, "cd", INT_MAX))
+		cont->excode = ft_cd(args, cont);
+	else if (!str_ncmp(cmd_name, "echo", INT_MAX))
+		cont->excode = ft_echo(args);
+	else if (!str_ncmp(cmd_name, "env", INT_MAX))
+		cont->excode = ft_env(cont);
+	else if (!str_ncmp(cmd_name, "export", INT_MAX))
+		cont->excode = ft_export(cont, args);
+	else if (!str_ncmp(cmd_name, "pwd", INT_MAX))
+		cont->excode = ft_pwd();
+	else if (!str_ncmp(cmd_name, "unset", INT_MAX))
+		cont->excode = ft_unset(args, cont);
+	return (cont->excode);
 }
