@@ -34,7 +34,7 @@ static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 {
 	if (cmd->fd_inf >= 0)
 		close(cmd->fd_inf);
-	if (tok->next == NULL)
+	if (tok->next->string && tok->next == NULL)
 		return (1);
 	cmd->fd_inf = get_fd(tok->next->string, type);
 	if (cmd->fd_inf < 0)
@@ -51,7 +51,7 @@ int	get_infile(t_token *tok, t_cmd *cmd)
 	{
 		if (tmp->type == IN || tmp->type == HEREDOC)
 		{
-			if (!tmp->next || tmp->next->type != CMD)
+			if (!tmp->next || !tmp->next->string)
 				return (1);
 			if (handle_input_redirect(tmp, cmd, tmp->type))
 				return (1);
@@ -66,7 +66,7 @@ static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 {
 	if (cmd->fd_out >= 0)
 		close(cmd->fd_out);
-	if (tok->next == NULL)
+	if (tok->next == NULL && !tok->next->string)
 		return (1);
 	cmd->fd_out = get_fd(tok->next->string, type);
 	if (cmd->fd_out < 0)
@@ -83,7 +83,7 @@ int get_outfile(t_token *tok, t_cmd *cmd)
     {
         if (tmp->type == OUT || tmp->type == APPEND)
         {
-            if (!tmp->next || tmp->next->type == PIPE || tmp->next->type == 0)
+            if (!tmp->next || !tmp->next->string || tmp->next->type == PIPE)
                 return (1);
             if (handle_output_redirect(tmp, cmd, tmp->type))
                 return (1);

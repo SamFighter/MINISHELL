@@ -27,11 +27,14 @@ void	controller_exec(t_controller *controller)
 	// else
 	while (curr_cmd)
 	{
-		curr_cmd->cmd_args = str_rarrdup_nset(curr_cmd->args, curr_cmd->str_cmd);
+		if (curr_cmd->str_cmd)
+	  		curr_cmd->cmd_args = str_rarrdup_nset(curr_cmd->args, curr_cmd->str_cmd);
 		curr_cmd = curr_cmd->next;
 	}
-	process_commands(controller);
-	exec(controller);
+	if (process_commands(controller) != 1)
+		exec(controller);
+	else
+		controller->excode = 2;
 }
 
 void	invalid_print(t_controller *controller)

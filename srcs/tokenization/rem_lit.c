@@ -24,9 +24,9 @@ void	rem_litstr(t_cmd *cmds)
 	{
 		while (cmds->tokens)
 		{
-			if (cmds->tokens->string[0] == '\"')
+			if (cmds->tokens->string && cmds->tokens->string[0] == '\"')
 				cmds->tokens->string = rem_lit_tk(cmds->tokens->string, 1);
-			if (cmds->tokens->string[0] == '\'')
+			if (cmds->tokens->string && cmds->tokens->string[0] == '\'')
 				cmds->tokens->string = rem_lit_tk(cmds->tokens->string, 2);
 			else
 				cmds->tokens->string = rem_lit_tk(cmds->tokens->string, 0);

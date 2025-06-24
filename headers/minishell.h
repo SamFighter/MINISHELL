@@ -118,6 +118,6 @@ char	*search_in_path(char *str_envp, char *cmd);
 void	handle_child_status(t_controller *cont, int pid, int status);
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip);
 void	handle_exec_error(char *path, char *path_env, int *pip);
-void process_commands(t_controller *controller);
+int		process_commands(t_controller *controller);
 
 #endif

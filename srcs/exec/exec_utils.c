@@ -79,7 +79,7 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 	return (search_in_path(str_envp, cmd->str_cmd));
 }
 
-void process_commands(t_controller *controller)
+int process_commands(t_controller *controller)
 {
     t_token *current_tok;
     t_cmd *current_cmd;
@@ -88,12 +88,21 @@ void process_commands(t_controller *controller)
     current_cmd = controller->cmdlist.cmds;
     while (current_tok && current_cmd)
     {
-        get_infile(current_tok, current_cmd);
-        get_outfile(current_tok, current_cmd);
+        if (get_infile(current_tok, current_cmd) == 1)
+		{
+			ft_printf("minishell: syntax error near unexpected token `newline'\n");
+			return (1);
+		}
+        if (get_outfile(current_tok, current_cmd) == 1)
+		{
+			ft_printf("minishell: syntax error near unexpected token `newline'\n");
+			return (1);
+		}
         while (current_tok && current_tok->type != PIPE)
             current_tok = current_tok->next;
         if (current_tok && current_tok->type == PIPE)
             current_tok = current_tok->next;
         current_cmd = current_cmd->next;
     }
+	return (0);
 }
