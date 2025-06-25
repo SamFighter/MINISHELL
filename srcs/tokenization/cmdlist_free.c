@@ -60,12 +60,15 @@ void	tk_free(t_token *tk)
 /**
  * Free the command linked-list and all the existng nodes
  */
-void	cmd_free(t_cmd	*cmd)
+
+void	cmd_free(t_cmd *cmd)
 {
+	t_cmd	*tmp;
+
 	while (cmd)
 	{
-		if (cmd->prev)
-			free(cmd->prev);
+		tmp = cmd->next;
+
 		if (cmd->args)
 			utl_super_free((void **)cmd->args);
 		if (cmd->outfiles)
@@ -74,15 +77,11 @@ void	cmd_free(t_cmd	*cmd)
 			utl_super_free((void **)cmd->infiles);
 		if (cmd->str_cmd)
 			free(cmd->str_cmd);
-		cmd->nb_tokens = 0;
-		cmd->has_cmd = 0;
 		tk_free(cmd->tokens);
-		if (cmd->next)
-			cmd = cmd->next;
-		else
-		{
-			free(cmd);
-			return ;
-		}
+		if (cmd->cmd_args)
+			utl_super_free((void **)cmd->cmd_args);
+
+		free(cmd);
+		cmd = tmp;
 	}
 }

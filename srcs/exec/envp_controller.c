@@ -19,8 +19,8 @@ int dup_env(t_controller *cont, char **envp)
 	cont->env = str_arrdup(envp);
 	if (!cont->env)
 		return (1);
-	cont->pwd = env_cut(str_dup(search_envp("PWD", cont->env)));
-	cont->old_pwd = env_cut(str_dup(search_envp("OLDPWD", cont->env)));
+	cont->pwd = env_cut(search_envp("PWD", cont->env));
+	cont->old_pwd = env_cut(search_envp("OLDPWD", cont->env));
 	return (0);
 }
 
