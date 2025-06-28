@@ -12,51 +12,51 @@
 
 #include "../../headers/minishell.h"
 
-static void error_heredoc(char *str)
+static void	error_heredoc(char *str)
 {
-    ft_printf("warning: here-document delimited by end-of-file");
-    ft_printf("(wanted '%s')\n", str);
+	ft_printf("warning: here-document delimited by end-of-file");
+	ft_printf("(wanted '%s')\n", str);
 }
 
-static int  read_prompt(int fd, char *str)
+static int	read_prompt(int fd, char *str)
 {
-    char    *prompt;
+	char	*prompt;
 
-    while (1)
-    {
-        prompt = readline("> ");
-        if (!prompt)
-        {
-            error_heredoc(str);
-            return (-1);
-        }
-        if (!str_strcmp(str, prompt))
-        {
-            free(prompt);
-            break;
-        }
-        write(fd, prompt, str_len(prompt));
-        write(fd, "\n", 1);
-        free(prompt);
-    }
-    close(fd);
-    return (0);
+	while (1)
+	{
+		prompt = readline("> ");
+		if (!prompt)
+		{
+			error_heredoc(str);
+			return (-1);
+		}
+		if (!str_strcmp(str, prompt))
+		{
+			free(prompt);
+			break ;
+		}
+		write(fd, prompt, str_len(prompt));
+		write(fd, "\n", 1);
+		free(prompt);
+	}
+	close(fd);
+	return (0);
 }
 
-int here_doc(char *eof)
+int	here_doc(char *eof)
 {
-    int fd;
+	int		fd;
 
-    fd = open(".tmp_heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    if (fd < 0)
-        return (-1);
-    if (read_prompt(fd, eof))
-    {
-        unlink(".tmp_heredoc");
-        return (-1);
-    }
-    fd = open(".tmp_heredoc", O_RDONLY);
-    if (fd > 0)
-        unlink(".tmp_heredoc");
-    return (fd);
+	fd = open(".tmp_heredoc", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd < 0)
+		return (-1);
+	if (read_prompt(fd, eof))
+	{
+		unlink(".tmp_heredoc");
+		return (-1);
+	}
+	fd = open(".tmp_heredoc", O_RDONLY);
+	if (fd > 0)
+		unlink(".tmp_heredoc");
+	return (fd);
 }

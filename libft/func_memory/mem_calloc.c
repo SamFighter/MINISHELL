@@ -22,13 +22,8 @@ void	*mem_calloc(size_t len, size_t size)
 {
 	unsigned char	*s;
 
-//	if (len <= 0 || size <= 0)
-//	{
-//		s = malloc(0);
-//		if (!s)
-//			return (NULL);
-//		return (s);
-//	}
+	if (len <= 0 || size <= 0)
+		return (NULL);
 	s = malloc(len * size);
 	if (!s)
 		return (NULL);
@@ -51,13 +46,8 @@ int	**mem_dbl_calloc_int(size_t len, size_t s_len)
 	size_t	i;
 
 	i = 0;
-//	if (len <= 0)
-//	{
-//		s = malloc(0);
-//		if (!s)
-//			return (NULL);
-//		return (s);
-//	}
+	if (len <= 0)
+		return (NULL);
 	s = malloc(len * sizeof(int *));
 	if (!s)
 		return (NULL);

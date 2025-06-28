@@ -47,7 +47,7 @@ static char	*build_path(char *env_path, int start, int end, char *cmd)
 	return (NULL);
 }
 
-char *search_in_path(char *str_envp, char *cmd)
+char	*search_in_path(char *str_envp, char *cmd)
 {
 	char	*path;
 	int		i;
@@ -69,7 +69,7 @@ char *search_in_path(char *str_envp, char *cmd)
 		i++;
 	}
 	path = build_path(str_envp, start, i, cmd);
-	return path;
+	return (path);
 }
 
 char	*get_path(char *str_envp, t_cmd *cmd)
@@ -79,30 +79,27 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 	return (search_in_path(str_envp, cmd->str_cmd));
 }
 
-int process_commands(t_controller *controller)
+int	process_commands(t_controller *controller)
 {
-    t_token *current_tok;
-    t_cmd *current_cmd;
+	t_token		*current_tok;
+	t_cmd		*current_cmd;
 
-    current_tok = controller->cmdlist.cmds->tokens;
-    current_cmd = controller->cmdlist.cmds;
-    while (current_tok && current_cmd)
-    {
-        if (get_infile(current_tok, current_cmd) == 1)
+	current_tok = controller->cmdlist.cmds->tokens;
+	current_cmd = controller->cmdlist.cmds;
+	while (current_tok && current_cmd)
+	{
+		if (get_infile(current_tok, current_cmd) == 1 || \
+			get_outfile(current_tok, current_cmd) == 1)
 		{
-			ft_printf("minishell: syntax error near unexpected token `newline'\n");
+			ft_printf("minishell: syntax error");
+			ft_printf(" near unexpected token `newline'\n");
 			return (1);
 		}
-        if (get_outfile(current_tok, current_cmd) == 1)
-		{
-			ft_printf("minishell: syntax error near unexpected token `newline'\n");
-			return (1);
-		}
-        while (current_tok && current_tok->type != PIPE)
-            current_tok = current_tok->next;
-        if (current_tok && current_tok->type == PIPE)
-            current_tok = current_tok->next;
-        current_cmd = current_cmd->next;
-    }
+		while (current_tok && current_tok->type != PIPE)
+			current_tok = current_tok->next;
+		if (current_tok && current_tok->type == PIPE)
+			current_tok = current_tok->next;
+		current_cmd = current_cmd->next;
+	}
 	return (0);
 }

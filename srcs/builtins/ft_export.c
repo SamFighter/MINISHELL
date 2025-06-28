@@ -15,7 +15,7 @@
 static int	export_no_args(t_controller *cont)
 {
 	char	**env;
-	char 	*cut;
+	char	*cut;
 	int		i;
 	int		y;
 
@@ -38,7 +38,7 @@ static int	export_no_args(t_controller *cont)
 
 static int	syntax_export(char *str)
 {
-	int i;
+	int		i;
 
 	i = 0;
 	if (!str[0] || (str[0] != '_' && !ctn_isalpha(str[0])))
@@ -54,8 +54,8 @@ static int	syntax_export(char *str)
 
 static int	check_alr_env(char **env, char *str)
 {
-	int i;
-	int	j;
+	int		i;
+	int		j;
 
 	if (!env)
 		return (-1);
@@ -65,7 +65,8 @@ static int	check_alr_env(char **env, char *str)
 	j = 0 ;
 	while (env[j])
 	{
-		if (!str_ncmp(env[j], str, i) && (env[j][i] == '\0' || env[j][i] == '='))
+		if (!str_ncmp(env[j], str, i) && \
+			(env[j][i] == '\0' || env[j][i] == '='))
 			return (j);
 		j++;
 	}
@@ -112,7 +113,7 @@ int	ft_export(t_controller *cont, char **args)
 	}
 	while (args[j])
 	{
-		if(syntax_export(args[j]) != 0)
+		if (syntax_export(args[j]) != 0)
 		{
 			ft_printf("export: invalid identifier\n");
 			cont->excode = 1;

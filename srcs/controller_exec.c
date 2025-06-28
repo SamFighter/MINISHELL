@@ -28,7 +28,8 @@ void	controller_exec(t_controller *controller)
 	while (curr_cmd)
 	{
 		if (curr_cmd->str_cmd)
-	  		curr_cmd->cmd_args = str_rarrdup_nset(curr_cmd->args, curr_cmd->str_cmd);
+			curr_cmd->cmd_args = \
+				str_rarrdup_nset(curr_cmd->args, curr_cmd->str_cmd);
 		curr_cmd = curr_cmd->next;
 	}
 	if (process_commands(controller) != 1)

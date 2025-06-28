@@ -20,8 +20,8 @@
  */
 int	ft_env(t_controller *cont)
 {
-	char **env;
-	int y;
+	char	**env;
+	int		y;
 
 	env = cont->env;
 	if (!env)
@@ -29,7 +29,7 @@ int	ft_env(t_controller *cont)
 	y = 0;
 	while (env[y])
 	{
-		ft_printf("%s\n",env[y]);
+		ft_printf("%s\n", env[y]);
 		y++;
 	}
 	return (0);

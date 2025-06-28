@@ -12,9 +12,9 @@
 
 #include "../../headers/minishell.h"
 
-char *env_cut(char *str)
+char	*env_cut(char *str)
 {
-	int i;
+	int		i;
 
 	i = 0;
 	while (str[i] && str[i] != '=')
@@ -81,5 +81,7 @@ int	exec_builtins(t_controller *cont, char *cmd_name, char **args)
 		cont->excode = ft_pwd();
 	else if (!str_ncmp(cmd_name, "unset", INT_MAX))
 		cont->excode = ft_unset(args, cont);
+	else if (!str_ncmp(cmd_name, "exit", INT_MAX))
+		cont->excode = ft_exit(cont, cont->cmdlist.cmds);
 	return (cont->excode);
 }

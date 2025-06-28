@@ -14,7 +14,7 @@
 
 static void	update_oldpwd(t_controller *cont, char *old_pwd)
 {
-	char *tmp;
+	char	*tmp;
 
 	free(cont->old_pwd);
 	cont->old_pwd = str_dup(old_pwd);
@@ -22,8 +22,9 @@ static void	update_oldpwd(t_controller *cont, char *old_pwd)
 	exportation(tmp, cont);
 	free(tmp);
 }
+
 /**
- * @brief Basic cd function to move between directories, and update pwd and old_pwd
+ * @brief Basic cd function to move between directories
  * 
  * @param args 
  * @param cont 

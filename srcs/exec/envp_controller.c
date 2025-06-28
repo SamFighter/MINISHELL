@@ -12,7 +12,7 @@
 
 #include "../../headers/minishell.h"
 
-int dup_env(t_controller *cont, char **envp)
+int	dup_env(t_controller *cont, char **envp)
 {
 	if (!(*envp))
 		return (make_env(cont));
@@ -24,10 +24,10 @@ int dup_env(t_controller *cont, char **envp)
 	return (0);
 }
 
-char *search_envp(char *str, char **envp)
+char	*search_envp(char *str, char **envp)
 {
-	int i;
-	int len;
+	int		i;
+	int		len;
 
 	if (!str || !envp)
 		return (NULL);
@@ -44,10 +44,10 @@ char *search_envp(char *str, char **envp)
 	return (NULL);
 }
 
-int make_env(t_controller *cont)
+int	make_env(t_controller *cont)
 {
-	char path[PATH_MAX];
-	char *tmp;
+	char	path[PATH_MAX];
+	char	*tmp;
 
 	if (getcwd(path, PATH_MAX) == NULL)
 		exit(1);

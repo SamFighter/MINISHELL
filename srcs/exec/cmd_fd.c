@@ -12,22 +12,22 @@
 
 #include "../../headers/minishell.h"
 
-static int  get_fd(char *filename, int type)
+static int	get_fd(char *filename, int type)
 {
-    int fd;
+	int		fd;
 
-    fd = -2;
-    if (type == IN)
-        fd = open(filename, O_RDONLY);
-    else if (type == OUT)
-        fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-    else if (type == HEREDOC)
-        fd = here_doc(filename);
-    else if (type == APPEND)
-        fd = open(filename, O_CREAT | O_APPEND | O_WRONLY, 0644);
-    if (fd < 0)
-        perror(filename);
-    return (fd);
+	fd = -2;
+	if (type == IN)
+		fd = open(filename, O_RDONLY);
+	else if (type == OUT)
+		fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	else if (type == HEREDOC)
+		fd = here_doc(filename);
+	else if (type == APPEND)
+		fd = open(filename, O_CREAT | O_APPEND | O_WRONLY, 0644);
+	if (fd < 0)
+		perror(filename);
+	return (fd);
 }
 
 static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
@@ -74,22 +74,22 @@ static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 	return (0);
 }
 
-int get_outfile(t_token *tok, t_cmd *cmd)
+int	get_outfile(t_token *tok, t_cmd *cmd)
 {
-    t_token *tmp;
+	t_token		*tmp;
 
-    tmp = tok;
-    while (tmp && tmp->type != PIPE)
-    {
-        if (tmp->type == OUT || tmp->type == APPEND)
-        {
-            if (!tmp->next || !tmp->next->string || tmp->next->type == PIPE)
-                return (1);
-            if (handle_output_redirect(tmp, cmd, tmp->type))
-                return (1);
-            tmp = tmp->next;
-        }
-        tmp = tmp->next;
-    }
-    return (0);
+	tmp = tok;
+	while (tmp && tmp->type != PIPE)
+	{
+		if (tmp->type == OUT || tmp->type == APPEND)
+		{
+			if (!tmp->next || !tmp->next->string || tmp->next->type == PIPE)
+				return (1);
+			if (handle_output_redirect(tmp, cmd, tmp->type))
+				return (1);
+			tmp = tmp->next;
+		}
+		tmp = tmp->next;
+	}
+	return (0);
 }

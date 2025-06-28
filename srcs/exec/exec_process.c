@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_process.c	                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/12 09:36:25 by salabbe           #+#    #+#             */
+/*   Updated: 2025/06/25 14:53:52 by salabbe          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
@@ -39,7 +50,6 @@ static void	exec_parent(t_cmd *cmd, int *pip)
 		close(cmd->fd_out);
 }
 
-
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 {
 	pid_t	pid;
@@ -58,5 +68,3 @@ void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 		exec_parent(cmd, pip);
 	}
 }
-
-

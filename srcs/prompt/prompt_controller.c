@@ -21,7 +21,7 @@ char	*prompt_controller(int excode, char **env)
 	char	*tmp;
 
 	(void)env;
-	tmp = strdup(getenv("USER")); // search_envp("USER", env);
+	tmp = str_dup(search_envp("USER", env));
 	if (!tmp)
 		tmp = GST_USER;
 	if (str_ncmp(tmp, "root", 4) == 0)

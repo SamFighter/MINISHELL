@@ -13,12 +13,12 @@
 #include "../../headers/minishell.h"
 
 /**
- * @brief Verify if in args their's '-n' flag and add true or false to the flag in ft_echo
+ * @brief Verify if in args their's '-n' flag
  * 
  * @param str 
  * @return int 
  */
-static int 	bool_new_line(char *str)
+static int	bool_new_line(char *str)
 {
 	size_t	i;
 
@@ -32,18 +32,17 @@ static int 	bool_new_line(char *str)
 			return (1);
 	}
 	return (0);
-
 }
 
 /**
- * @brief The core of the ft_echo function, with every info received, the will function write each args
+ * @brief The core of the ft_echo function
  * 
  * @param args 
  * @param len 
  * @param y 
  * @param new_line 
  */
-static void print_echo(char **args, int len, int y, bool new_line)
+static void	print_echo(char **args, int len, int y, bool new_line)
 {
 	while (args[y] && bool_new_line(args[y]))
 	{
@@ -52,14 +51,15 @@ static void print_echo(char **args, int len, int y, bool new_line)
 	}
 	while (y < len)
 	{
-		write(STDOUT_FILENO, args[y], str_len(args[y]));
+		write(1, args[y], str_len(args[y]));
 		if (y != len - 1)
-			write(STDOUT_FILENO, " ", 1);
+			write(1, " ", 1);
 		y++;
 	}
 	if (new_line)
-		write(STDOUT_FILENO, "\n", 1);
+		write(1, "\n", 1);
 }
+
 /**
  * @brief Print in the standard output the args
  * 
@@ -69,13 +69,13 @@ static void print_echo(char **args, int len, int y, bool new_line)
 int	ft_echo(char **args)
 {
 	int		len;
-	int 	y;
+	int		y;
 	bool	new_line;
 
 	len = 0;
 	if (args == NULL)
 	{
-		write(STDOUT_FILENO, "\n", 1);
+		ft_printf("\n");
 		return (0);
 	}
 	while (args[len])
