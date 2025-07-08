@@ -14,21 +14,33 @@
 
 static void	error_heredoc(char *str)
 {
-	ft_printf("warning: here-document delimited by end-of-file");
-	ft_printf("(wanted '%s')\n", str);
+	if (g_sig != 130)
+	{
+		ft_printf("warning: here-document delimited by end-of-file");
+		ft_printf("(wanted '%s')\n", str);
+	}
 }
 
-static int	read_prompt(int fd, char *str)
+void	sig_hd(int sig)
+{
+	(void) sig;
+	g_sig = 130;
+	printf("\n");
+	close(0);
+}
+
+static int	read_prompt(int fd, int fd2, char *str)
 {
 	char	*prompt;
 
+	prompt = NULL;
 	while (1)
 	{
 		prompt = readline("> ");
 		if (!prompt)
 		{
 			error_heredoc(str);
-			return (-1);
+			break ;
 		}
 		if (!str_strcmp(str, prompt))
 		{
@@ -39,7 +51,7 @@ static int	read_prompt(int fd, char *str)
 		write(fd, "\n", 1);
 		free(prompt);
 	}
-	close(fd);
+	dup2(fd2, 0);
 	return (0);
 }
 
@@ -54,9 +66,12 @@ static char	*get_tmp_name(void)
 		return (NULL);
 	result = str_join(".tmp_heredoc_", tmp);
 	free(tmp);
+	if (!result)
+		return (NULL);
 	tmp = cnv_itoa(i++);
 	if (!tmp)
 		return (result);
+	free(tmp);
 	tmp = str_join(result, "_");
 	free(result);
 	result = str_join(tmp, tmp);
@@ -67,18 +82,25 @@ static char	*get_tmp_name(void)
 int	here_doc(char *eof)
 {
 	int		fd;
+	int		dup_fd;
 	char	*tmp_name;
 
 	tmp_name = get_tmp_name();
+	dup_fd = dup(0);
+	signal(SIGINT, sig_hd);
 	if (!tmp_name)
 		return (-1);
 	fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
-		return (free(tmp_name), -1);
-	if (read_prompt(fd, eof))
-		return (unlink(tmp_name), free(tmp_name), -1);
+	{
+		  free(tmp_name);
+		  return (-1);
+	}
+	read_prompt(fd, dup_fd, eof);
 	fd = open(tmp_name, O_RDONLY);
 	if (fd > 0)
 		unlink(tmp_name);
-	return (free(tmp_name), fd);
+	free(tmp_name);
+	close(dup_fd);
+	return (fd);
 }

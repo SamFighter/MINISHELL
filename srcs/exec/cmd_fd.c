@@ -21,24 +21,31 @@ static int	get_fd(char *filename, int type)
 		fd = open(filename, O_RDONLY);
 	else if (type == OUT)
 		fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	else if (type == HEREDOC)
+	else if (type == HEREDOC && g_sig != 130)
 		fd = here_doc(filename);
 	else if (type == APPEND)
 		fd = open(filename, O_CREAT | O_APPEND | O_WRONLY, 0644);
-	if (fd < 0)
+	if (type != HEREDOC && fd < 0)
 		perror(filename);
 	return (fd);
 }
 
 static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 {
-	if (cmd->fd_inf >= 0)
-		close(cmd->fd_inf);
+	int new_fd;
+
 	if (!tok->next || !tok->next->string)
 		return (1);
-	cmd->fd_inf = get_fd(tok->next->string, type);
-	if (cmd->fd_inf < 0)
+	new_fd = get_fd(tok->next->string, type);
+	if (new_fd < 0)
+	{
+		if (type == HEREDOC)
+			return (130);
 		return (1);
+	}
+	if (cmd->fd_inf >= 0)
+		close(cmd->fd_inf);
+	cmd->fd_inf = new_fd;
 	return (0);
 }
 

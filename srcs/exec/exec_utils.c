@@ -64,7 +64,8 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 {
 	if (!cmd || !cmd->str_cmd)
 		return (NULL);
-	if (cmd->str_cmd[0] == '/' || (cmd->str_cmd[0] == '.' && cmd->str_cmd[1] == '/'))
+	if (cmd->str_cmd[0] == '/' || \
+		(cmd->str_cmd[0] == '.' && cmd->str_cmd[1] == '/'))
 	{
 		if (access(cmd->str_cmd, F_OK) == 0 && access(cmd->str_cmd, X_OK) == 0)
 			return (str_dup(cmd->str_cmd));
@@ -84,8 +85,8 @@ int	process_commands(t_controller *controller)
 	current_cmd = controller->cmdlist.cmds;
 	while (current_tok && current_cmd)
 	{
-		if (get_infile(current_tok, current_cmd) == 1 || \
-			get_outfile(current_tok, current_cmd) == 1)
+		if ((get_infile(current_tok, current_cmd) == 1 || \
+			get_outfile(current_tok, current_cmd) == 1) && g_sig != 130)
 		{
 			ft_printf("minishell: syntax error");
 			ft_printf(" near unexpected token `newline'\n");

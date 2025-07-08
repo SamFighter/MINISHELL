@@ -31,6 +31,7 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 	execve(path, cmd->cmd_args, cont->env);
 	perror(path);
 	free(path);
+	controller_free(cont);
 	exit(126);
 }
 

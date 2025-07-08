@@ -16,7 +16,7 @@ void	sig_int(int sig)
 {
 	(void) sig;
 	g_sig = 130;
-	fd_printf(1, "\n");
+	printf("\n");
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
