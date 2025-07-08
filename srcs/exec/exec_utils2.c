@@ -46,20 +46,6 @@ int	check_path(char *path, char *cmd)
 	return (result);
 }
 
-bool	search_pipe(t_token *tok)
-{
-	t_token	*tmp;
-
-	tmp = tok;
-	while (tmp)
-	{
-		if (tmp->type == PIPE)
-			return (true);
-		tmp = tmp->next;
-	}
-	return (false);
-}
-
 int	check_cmd(t_controller *cont)
 {
 	char	*abs_path;
@@ -69,8 +55,6 @@ int	check_cmd(t_controller *cont)
 		return (-1);
 	path_env = search_envp("PATH", cont->env);
 	abs_path = get_path(path_env, cont->cmdlist.cmds);
-	if (path_env)
-		free(path_env);
 	if (!abs_path)
 	{
 		ft_printf("%s: command not found\n", cont->cmdlist.cmds->str_cmd);

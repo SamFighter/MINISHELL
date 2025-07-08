@@ -34,7 +34,7 @@ static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 {
 	if (cmd->fd_inf >= 0)
 		close(cmd->fd_inf);
-	if (tok->next->string && tok->next == NULL)
+	if (!tok->next || !tok->next->string)
 		return (1);
 	cmd->fd_inf = get_fd(tok->next->string, type);
 	if (cmd->fd_inf < 0)
@@ -66,7 +66,7 @@ static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 {
 	if (cmd->fd_out >= 0)
 		close(cmd->fd_out);
-	if (tok->next == NULL && !tok->next->string)
+	if (!tok->next || !tok->next->string)
 		return (1);
 	cmd->fd_out = get_fd(tok->next->string, type);
 	if (cmd->fd_out < 0)

@@ -12,39 +12,28 @@
 
 #include "../../headers/minishell.h"
 
-static char	*create_full_path(char *dir, char *cmd)
+static char	*try_path(char *env_path, int start, int end, char *cmd)
 {
+	char	*dir;
 	char	*tmp;
 	char	*full_path;
 
+	if (end - start <= 0)
+		return (NULL);
+	dir = str_substr(env_path, start, end - start);
+	if (!dir)
+		return (NULL);
 	tmp = str_join(dir, "/");
+	free(dir);
 	if (!tmp)
 		return (NULL);
 	full_path = str_join(tmp, cmd);
 	free(tmp);
-	return (full_path);
-}
-
-static char	*build_path(char *env_path, int start, int end, char *cmd)
-{
-	char	*dir;
-	char	*full_path;
-	int		len;
-
-	len = end - start;
-	if (len <= 0)
-		return (NULL);
-	dir = str_substr(env_path, start, len);
-	if (!dir)
-		return (NULL);
-	full_path = create_full_path(dir, cmd);
-	free(dir);
 	if (!full_path)
 		return (NULL);
-	if (access(full_path, F_OK) == 0 && access(full_path, X_OK) == 0)
+	if (access(full_path, F_OK | X_OK) == 0)
 		return (full_path);
-	free(full_path);
-	return (NULL);
+	return (free(full_path), NULL);
 }
 
 char	*search_in_path(char *str_envp, char *cmd)
@@ -61,20 +50,27 @@ char	*search_in_path(char *str_envp, char *cmd)
 	{
 		if (str_envp[i] == ':')
 		{
-			path = build_path(str_envp, start, i, cmd);
+			path = try_path(str_envp, start, i, cmd);
 			if (path)
 				return (path);
 			start = i + 1;
 		}
 		i++;
 	}
-	path = build_path(str_envp, start, i, cmd);
-	return (path);
+	return (try_path(str_envp, start, i, cmd));
 }
 
 char	*get_path(char *str_envp, t_cmd *cmd)
 {
-	if (!str_envp || !cmd || !cmd->str_cmd)
+	if (!cmd || !cmd->str_cmd)
+		return (NULL);
+	if (cmd->str_cmd[0] == '/' || (cmd->str_cmd[0] == '.' && cmd->str_cmd[1] == '/'))
+	{
+		if (access(cmd->str_cmd, F_OK) == 0 && access(cmd->str_cmd, X_OK) == 0)
+			return (str_dup(cmd->str_cmd));
+		return (NULL);
+	}
+	if (!str_envp)
 		return (NULL);
 	return (search_in_path(str_envp, cmd->str_cmd));
 }
