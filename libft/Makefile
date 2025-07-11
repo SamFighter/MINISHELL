@@ -6,7 +6,7 @@
 #    By: fmontel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/09 10:51:03 by salabbe           #+#    #+#              #
-#    Updated: 2025/05/13 17:57:54 by fmontel          ###   ########.fr        #
+#    Updated: 2025/07/04 10:33:58 by fmontel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,7 @@ MANDATORY		:=	get_next_line.c 				\
 					func_contain/ctn_strchr.c		\
 					func_contain/ctn_strrchr.c		\
 					func_convert/cnv_atoi.c			\
+					func_convert/cnv_str.c			\
 					func_convert/cnv_sttoa.c		\
 					func_convert/cnv_itoa.c			\
 					func_memory/mem_bzero.c			\
@@ -53,21 +54,27 @@ MANDATORY		:=	get_next_line.c 				\
 					func_replacement/rep_toupper.c	\
 					func_string/str_arrdup.c		\
 					func_string/str_arrrep.c		\
+					func_string/str_atoarr.c		\
 					func_string/str_cat.c			\
 					func_string/str_cmp.c			\
 					func_string/str_cpy.c			\
 					func_string/str_dup.c			\
+					func_string/str_duppart.c		\
 					func_string/str_iteri.c			\
 					func_string/str_join.c			\
+					func_string/str_llstr.c			\
 					func_string/str_len.c			\
 					func_string/str_mapi.c			\
+					func_string/str_rep.c			\
 					func_string/str_rarrdup.c		\
+					func_string/str_rarrrep.c		\
 					func_string/str_split.c			\
 					func_string/str_str.c			\
 					func_string/str_substr.c		\
 					func_string/str_trim.c			\
 					func_utility/utl_dbl_arrlen.c	\
-					func_utility/utl_int_len.c	\
+					func_utility/utl_getlen_line.c	\
+					func_utility/utl_int_len.c		\
 					func_utility/utl_putchar.c		\
 					func_utility/utl_putarrstr.c	\
 					func_utility/utl_putendl.c		\

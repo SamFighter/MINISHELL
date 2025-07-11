@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/27 15:02:41 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:54:53 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,15 +83,15 @@ void	tk_free(t_token *tk);
 
 //----------------   Signals   ---------------------------------
 
+int		sig_value(int prev_value);
 void	sig_int(int sig);
-// void	sig_segv(int sig);
+void	sig_segv(int sig);
 void	sig_abrt(int sig);
 
 //------------------   Execs   ---------------------------------
 
 bool	is_builtin(t_cmd *cmd);
-int		dup_env(t_controller *cont, char **envp);
-int		make_env(t_controller *cont);
+void	dup_env(t_controller *cont, char **envp);
 int		ft_cd(char **args, t_controller *cont);
 int		ft_echo(char **args);
 int		ft_export(t_controller *cont, char **args);
@@ -117,6 +117,6 @@ void	handle_child_status(t_controller *cont, int pid, int status);
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip);
 void	handle_exec_error(char *path, char *path_env, int *pip);
 int		process_commands(t_controller *controller);
-int	ft_exit(t_controller *cont, t_cmd *cmd);;
+int		ft_exit(t_controller *cont, t_cmd *cmd);;
 
 #endif

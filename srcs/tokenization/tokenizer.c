@@ -13,6 +13,10 @@
 #include "../../headers/minishell.h"
 #include "../../headers/debug.h"
 
+void	getlen_token(char *str, t_cmdlist *cmdlist);
+void	create_tokens(char *str, t_cmdlist *cmdlist);
+void	set_type_token(t_cmdlist *cmdlist);
+
 /**
  * Call all the functions to tokenize the command line in the right order
  */
@@ -24,19 +28,22 @@ int	tokenizer(char *str, t_controller *cont)
 	while (str && ctn_iswhitespace(*str))
 		str++;
 	if (*str == 0)
+	{
+		cont->cmdlist.invalid = -1;
 		return (0);
+	}
 	cmdlist = &cont->cmdlist;
 	getlen_token(str, cmdlist);
 	tk_tostart(&cmdlist->tokens);
 	create_tokens(str, cmdlist);
 	set_type_token(cmdlist);
 	cmd_tostart(&cmdlist->cmds);
-	cmd_toarr(&cmdlist, cont->env);
-	rem_litstr(cmdlist->cmds);
+	cmd_toarr(&cmdlist, cont->env, cont->excode);
 	cmd_tostart(&cmdlist->cmds);
-	// log_controller(cont, 1);
-	// log_cmds(cont->cmdlist.cmds, 1);
-	// log_tokens(cont->cmdlist.tokens, 1);
+	if (cmdlist->invalid == 0)
+		cmdlist->invalid = check_invalid(&cmdlist->cmds);
+	cmd_tostart(&cmdlist->cmds);
+	log_controller(cont, 1);
 	return (1);
 }
 
@@ -52,7 +59,7 @@ void	getlen_token(char *str, t_cmdlist *cmdlist)
 	i = -1;
 	while (str[++i])
 	{
-		lit = ctn_lit(str, i, lit);
+		lit = ctn_quote(str, i, lit);
 		cmdlist->tokens->len++;
 		if (lit == 0 && i > 0 && ctn_smbl(str, i) == 1)
 		{
@@ -104,7 +111,7 @@ void	set_type_token(t_cmdlist *cmdlist)
 	while (tk)
 	{
 		set = 0;
-		if (tk && tk->string[0] == '|' && tk->string[1] != '|')
+		if (tk && tk->string[0] == '|')
 			tk_type_pipe(&cmdlist->cmds, &tk);
 		if (!set && tk_type_infile(&cmdlist->cmds, &tk))
 			set = 1;

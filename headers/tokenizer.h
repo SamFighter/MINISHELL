@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/20 15:47:47 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 23:25:52 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ typedef struct s_cmd
 	int				nb_tokens;
 	char			*str_cmd;
 	char			**args;
-	char			**cmd_args;
 	char			**infiles;
 	char			**outfiles;
 	int				fd_inf;
@@ -90,14 +89,9 @@ typedef struct s_cmdlist
 
 //----------------   Main   ------------------------------------
 
-void		create_tokens(char *str, t_cmdlist *cmdlist);
-void		getlen_token(char *str, t_cmdlist *cmdlist);
-void		set_type_token(t_cmdlist *cmdlist);
-void		cmd_toarr(t_cmdlist **cmdlist, char **env);
-void		cmd_toarr2(t_cmdlist **cmdlist, char **env);
-void		cmd_toarr3(t_cmdlist **cmdlist);
-// int 		get_infile(t_controller *cont, t_token *tok, t_cmd *cmd);
-// int 		get_out(t_controller *cont, t_token *tok, t_cmd *cmd);
+void		cmd_toarr(t_cmdlist **cmdlist, char **env, int excode);
+void		tk_remnull(t_cmd **cmds);
+int			check_invalid(t_cmd	**cmds);
 
 //----------------   Init Tokens   -----------------------------
 
@@ -105,18 +99,23 @@ t_token		*tk_init(void);
 t_token		*tk_initnext(t_token *tk, char c);
 t_token		*tk_dup(t_cmd **cmd, t_token *original_tk, int type);
 void		tk_end(t_token *tk);
+void		tk_fuse(t_token **token, t_token **tk_next);
+t_token		*tk_inject(t_token **open, t_token*close, t_token *inject);
+t_token		*tk_addnode(t_token *tk, t_token **tk_all);
 
 //----------------   Go To Start   -----------------------------
 
 void		tk_tostart(t_token **tk);
+void		tk_tolast(t_token **tk);
 void		cmd_tostart(t_cmd **cmd);
 
 //-------------   Literals & Symbols   -------------------------
 
-int			ctn_lit(char *str, int pos, int literal);
-int			ctn_lits(int literal, int pos, char c, char prev_c);
-int			ctn_litc(int literal, int pos, char c, char prev_c);
-int			reset_lit(int literal, char c, char prev_c);
+int			ctn_quote(char *str, int pos, int literal);
+int			ctn_quote_both(char *str, int pos, int in_quote);
+int			ctn_quotes(int literal, int pos, char c, char prev_c);
+int			ctn_quotec(int literal, int pos, char c, char prev_c);
+int			reset_quote(int quote, char c, char prev_c);
 int			ctn_smbl(char *str, int pos);
 int			ctn_smbl_tk(char *str);
 
@@ -132,11 +131,11 @@ void		tk_type_pipe(t_cmd **cmds, t_token **token);
 
 char		*str_env(char *str);
 char		**mult_str_env(char **env, char *str);
-void		expander(t_cmd *cmds, char **env);
-void		tk_expand(t_token *tk, char **env);
+void		expander(t_cmd *cmds, char **env, int excode);
+void		get_tk_start(t_token **token, int pos);
 
 //--------------   Remove Literals   ---------------------------
 
-void		rem_litstr(t_cmd *cmds);
+void		rem_quote_str(t_cmd *cmds);
 
 #endif

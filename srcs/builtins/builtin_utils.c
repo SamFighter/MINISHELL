@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 14:48:38 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/15 09:26:05 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:56:14 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
-
-char	*env_cut(char *str)
-{
-	int		i;
-
-	i = 0;
-	while (str[i] && str[i] != '=')
-		i++;
-	if (str[i] == '=')
-		return (str + i + 1);
-	return (NULL);
-}
 
 bool	is_builtin(t_cmd *cmd)
 {
@@ -33,7 +21,7 @@ bool	is_builtin(t_cmd *cmd)
 	y = 0;
 	while (builtin[y])
 	{
-		if (str_strcmp((char *) builtin[y], cmd->str_cmd) == 0)
+		if (str_cmp((char *) builtin[y], cmd->str_cmd) == 0)
 			return (true);
 		y++;
 	}
@@ -53,7 +41,7 @@ int	prepare_builtin(t_controller *cont, t_cmd *cmd)
 			return (1);
 		close(cmd->fd_out);
 	}
-	result = exec_builtins(cont, cmd->cmd_args[0], cmd->args);
+	result = exec_builtins(cont, cmd->str_cmd, cmd->args);
 	if (stdout_backup >= 0)
 	{
 		dup2(stdout_backup, STDOUT_FILENO);

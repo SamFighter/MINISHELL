@@ -31,7 +31,6 @@ t_cmd	*init_cmd(void)
 	new_cmd->fd_out = -2;
 	new_cmd->fd_inf = -2;
 	new_cmd->str_cmd = NULL;
-	new_cmd->cmd_args = NULL;
 	new_cmd->tokens = tk_init();
 	return (new_cmd);
 }

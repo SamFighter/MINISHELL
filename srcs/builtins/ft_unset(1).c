@@ -69,7 +69,7 @@ static bool	unset(t_controller *cont, char *str)
 
 	if (!str)
 		return (false);
-	if (!check_syntax(str))
+	if (check_syntax(str))
 	{
 		ft_printf("unset : invalid indentifier\n");
 		return (true);
@@ -93,8 +93,6 @@ int	ft_unset(char **str, t_controller *cont)
 {
 	int		j;
 
-	if (!str)
-		return (-1);
 	j = 0;
 	while (str[j])
 	{

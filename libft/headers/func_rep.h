@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 19:21:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 15:29:40 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:05:06 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ char		*rep_mult_ctonull(char *str, char c);
 char		*rep_ptonull(char *str, int pos);
 int			rep_toupper(int c);
 int			rep_tolower(int c);
+char		*rep_latoa(char *str, char *rep, char *apn, int start);
 
 #endif

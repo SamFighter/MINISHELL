@@ -1,35 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rem_lit.c                                          :+:      :+:    :+:   */
+/*   rem_quote.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 13:56:43 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 18:09:25 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:32:27 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-char	*rem_lit_tk(char *tk, int type);
-char	*rem_lit(char *str, int start, int end);
+char	*rem_quote_tk(char *tk, int type);
+char	*rem_quote(char *str, int start, int end);
+int		set_type(char c);
 
 /**
  * Remove quote from every cmds->tokens->string as needed
  */
-void	rem_litstr(t_cmd *cmds)
+void	rem_quote_str(t_cmd *cmds)
 {
 	while (cmds)
 	{
-		while (cmds->tokens)
+		while (cmds->tokens && cmds->tokens->string)
 		{
-			if (cmds->tokens->string && cmds->tokens->string[0] == '\"')
-				cmds->tokens->string = rem_lit_tk(cmds->tokens->string, 1);
-			if (cmds->tokens->string && cmds->tokens->string[0] == '\'')
-				cmds->tokens->string = rem_lit_tk(cmds->tokens->string, 2);
-			else
-				cmds->tokens->string = rem_lit_tk(cmds->tokens->string, 0);
+			cmds->tokens->string = rem_quote_tk(cmds->tokens->string, 0);
+			if (cmds->tokens->string[0] == 0)
+			{
+				free(cmds->tokens->string);
+				cmds->tokens->string = NULL;
+			}
 			if (cmds->tokens->type == CMD)
 			{
 				free(cmds->str_cmd);
@@ -45,27 +46,28 @@ void	rem_litstr(t_cmd *cmds)
 	}
 }
 
-char	*rem_lit_tk(char *s, int type)
+char	*rem_quote_tk(char *s, int type)
 {
-	int		i;
+	size_t	i;
 	int		pos[2];
 
 	i = -1;
+	pos[0] = -1;
 	pos[1] = -1;
 	while ((size_t)++i < str_len(s))
 	{
-		if (type == 0 || (type != 0 && i == 0))
+		if (pos[0] == -1 && (s[i] == '\"' || s[i] == '\''))
+		{
 			pos[0] = i;
-		else if (type == 0 && s[i] == '\"')
-			type = 1;
-		else if (type == 0 && s[i] == '\'')
-			type = 2;
+			type = set_type(s[i]);
+		}
 		else if ((type == 1 && s[i] == '\"') || (type == 2 && s[i] == '\''))
 			pos[1] = i;
 		if (pos[1] != -1)
 		{
-			s = rem_lit(s, pos[0], pos[1]);
+			s = rem_quote(s, pos[0], pos[1]);
 			type = 0;
+			pos[0] = -1;
 			pos[1] = -1;
 			i -= 2;
 		}
@@ -73,7 +75,7 @@ char	*rem_lit_tk(char *s, int type)
 	return (s);
 }
 
-char	*rem_lit(char *str, int start, int end)
+char	*rem_quote(char *str, int start, int end)
 {
 	char	*s;
 	char	*tmp;
@@ -83,4 +85,13 @@ char	*rem_lit(char *str, int start, int end)
 	free(str);
 	free(tmp);
 	return (s);
+}
+
+int	set_type(char c)
+{
+	if (c == '\"')
+		return (1);
+	if (c == '\'')
+		return (2);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 05:21:00 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 16:13:36 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:09:03 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ void	debug_token(t_token *tk)
 		return (utl_putchar('\n'));
 	if (tk->string)
 		ft_printf("	- str	= %s\n", tk->string);
+	else
+		ft_printf("	- str	= (null)\n");
 	ft_printf("	- adress	= 0x%X\n", tk);
 	ft_printf("	- p_adress	= 0x%X\n", tk->prev);
 	ft_printf("	- n_adress	= %X\n", tk->next);

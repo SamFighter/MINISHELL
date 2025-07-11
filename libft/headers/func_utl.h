@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 19:21:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/12 13:38:49 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:05:36 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@ void		utl_putarrstr(const char **strarr);
 int			utl_putlarrstr(const char **strarr);
 void		utl_putarrstr_fd(char **strarr, int fd);
 int			utl_putlarrstr_fd(char **strarr, int fd);
+int			utl_getlen_line(char *s, int start, char c);
+int			utl_getlen_line_ws(char *s, int start);
 
 #endif

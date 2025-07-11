@@ -1,24 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   closing.c                                          :+:      :+:    :+:   */
+/*   sarr_add_if_none.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 15:44:11 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/10 14:15:31 by fmontel          ###   ########.fr       */
+/*   Created: 2025/06/25 08:58:39 by fmontel           #+#    #+#             */
+/*   Updated: 2025/06/28 13:43:00 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
+#include "../headers/libft.h"
 
 /**
- * Exit the program and return 'excode'
- * - Change the excode depending on signals if needed
+ * @brief Add a string (char *) to an array of string (char **) if it is not
+ * already present in said array of string
  */
-void	closing(t_controller *cont)
+char	**sarr_add_if_none(char **sarr, char *s)
 {
-	fd_printf(1, "exit\n");
-	controller_free(cont);
-	exit(cont->excode % 256);
+	int		i;
+
+	i = 0;
+	while (sarr[i])
+	{
+		if (sarr[i] != s)
+			i++;
+		else
+			return (sarr);
+	}
+	return (str_arrdup_nset(sarr, s));
 }

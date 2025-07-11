@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:48:03 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/20 15:25:57 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:43:16 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,17 +80,25 @@ int	process_commands(t_controller *controller)
 {
 	t_token		*current_tok;
 	t_cmd		*current_cmd;
+	int			result;
 
 	current_tok = controller->cmdlist.cmds->tokens;
 	current_cmd = controller->cmdlist.cmds;
 	while (current_tok && current_cmd)
 	{
-		if ((get_infile(current_tok, current_cmd) == 1 || \
-			get_outfile(current_tok, current_cmd) == 1) && g_sig != 130)
+		result = get_infile(current_tok, current_cmd);
+		if (result == 130)
 		{
-			ft_printf("minishell: syntax error");
-			ft_printf(" near unexpected token `newline'\n");
-			return (1);
+			controller->excode = 130;
+			return (130);
+		}
+		if ((result == 1 || get_outfile(current_tok, current_cmd) == 1) && \
+			g_sig != SIGINT)
+		{
+			fd_printf(2, "minihell: syntax error");
+			fd_printf(2, " near unexpected token `newline'\n");
+			controller->excode = 2;
+			return (2);
 		}
 		while (current_tok && current_tok->type != PIPE)
 			current_tok = current_tok->next;

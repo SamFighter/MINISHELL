@@ -3,63 +3,115 @@
 /*                                                        :::      ::::::::   */
 /*   envp_controller.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:36:25 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/19 14:53:52 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:58:08 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-int	dup_env(t_controller *cont, char **envp)
+void	make_env(t_controller *cont);
+void	exit_make_env(t_controller *cont);
+
+/**
+ * Duplicate all environment variable or create necessary ones if none
+ */
+void	dup_env(t_controller *cont, char **envp)
 {
+	char	*str;
+
 	if (!(*envp))
 		return (make_env(cont));
 	cont->env = str_arrdup(envp);
 	if (!cont->env)
-		return (1);
-	cont->pwd = env_cut(search_envp("PWD", cont->env));
-	cont->old_pwd = env_cut(search_envp("OLDPWD", cont->env));
-	return (0);
+		exit_make_env(cont);
+	str = search_envp("PWD=", cont->env);
+	cont->pwd = env_cut(str);
+	free(str);
+	str = search_envp("OLDPWD=", cont->env);
+	cont->old_pwd = env_cut(str);
+	free(str);
 }
 
+/**
+ * @brief Return the searched environment variable, NULL if not found
+ * @warning returns it with the variable name and '=' symbol at the start
+ */
 char	*search_envp(char *str, char **envp)
 {
-	int		i;
+	int		y;
+	char	*s;
 	int		len;
 
 	if (!str || !envp)
 		return (NULL);
 	if (str[0] == '$')
-		str++;
-	len = str_len(str);
-	i = 0;
-	while (envp[i])
+		s = str_substr(str, 1, str_len(str) - 1);
+	else
+		s = str_dup(str);
+	y = 0;
+	len = str_len(s);
+	while (envp[y])
 	{
-		if (!str_ncmp(envp[i], str, len) && envp[i][len] == '=')
-			return (envp[i] + len + 1);
-		i++;
+		if (!(str_llstr(envp[y], s, len, 0) && envp[y][len] == '='))
+			y++;
+		else
+		{
+			s = str_rep(s, envp[y]);
+			return (s);
+		}
 	}
+	free (s);
 	return (NULL);
 }
 
-int	make_env(t_controller *cont)
+void	make_env(t_controller *cont)
 {
 	char	path[PATH_MAX];
 	char	*tmp;
 
-	if (getcwd(path, PATH_MAX) == NULL)
-		exit(1);
+	tmp = getcwd(path, PATH_MAX);
+	if (tmp == NULL)
+	{
+		free(tmp);
+		exit_make_env(cont);
+	}
 	tmp = str_dup("OLDPWD=");
 	if (!tmp)
-		exit(1);
+		exit_make_env(cont);
 	cont->env = mem_calloc(3, sizeof(char *));
 	if (!cont->env)
-		exit(1);
+		exit_make_env(cont);
 	cont->env[0] = tmp;
 	cont->env[1] = str_join("PWD=", path);
 	if (!cont->env[1])
-		exit(1);
-	return (0);
+		exit_make_env(cont);
+}
+
+/**
+ * @brief Returns a substring of the environment variable passed without
+ * the variale name and '=' symbol
+ */
+char	*env_cut(char *str)
+{
+	int		i;
+	char	*cut;
+
+	i = 0;
+	if (!str)
+		return (NULL);
+	while (str[i] != '=')
+		i++;
+	cut = str_substr(str, i + 1, str_len(str) - (i + 1));
+	return (cut);
+}
+
+void	exit_make_env(t_controller *cont)
+{
+	controller_free(cont);
+	fd_printf(1, "minihell: error while trying to create missing");
+	fd_printf(1, "nessecary environment variables\n");
+	abort();
 }

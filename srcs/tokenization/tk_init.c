@@ -43,27 +43,6 @@ t_token	*tk_initnext(t_token *tk, char c)
 }
 
 /**
- * Duplicate a token node and return it as a new token
- * - Doing so help prevent the token from beeing linked to the wrong list 
- */
-t_token	*tk_dup(t_cmd **cmd, t_token *original_tk, int type)
-{
-	t_token	*new_tk;
-
-	new_tk = tk_init();
-	new_tk->prev = (*cmd)->tokens->prev;
-	if (original_tk)
-	{
-		new_tk->string = str_dup(original_tk->string);
-		new_tk->env_str = str_arrdup(original_tk->env_str);
-		new_tk->len = original_tk->len;
-	}
-	new_tk->type = type;
-	free((*cmd)->tokens);
-	return (new_tk);
-}
-
-/**
  * Change the lenght of the string of the last token in the list,
  * Return 0
  */

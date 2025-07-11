@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 14:29:52 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/06 16:58:54 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 17:55:02 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,38 @@ char	*str_join(char const *s1, char const *s2)
 		j++;
 	}
 	s[i + j] = 0;
+	return (s);
+}
+
+/**
+ * @brief Join the strings (char *) 's1 and 's2' and return the
+ * joined string and free 's1'
+ */
+char	*str_rejoin(char *s1, char *s2)
+{
+	char	*s;
+	int		i;
+	int		j;
+
+	if (!s1)
+		return (str_dup(s2));
+	if (!s2)
+		return (str_dup(s1));
+	s = mem_calloc(str_len(s1) + str_len(s2) + 1, sizeof(char));
+	if (!s)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s1[i] != 0)
+	{
+		s[i] = s1[i];
+		i++;
+	}
+	while (s2[j] != 0)
+	{
+		s[i + j] = s2[j];
+		j++;
+	}
+	free(s1);
 	return (s);
 }

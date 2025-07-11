@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 08:32:38 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/06 16:24:39 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:00:27 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,11 @@ char	**utl_super_free(void **str)
 	while (*str)
 	{
 		free(*str);
+		*str = NULL;
 		str++;
 	}
 	free(*str);
+	*str = NULL;
 	free(orig_str);
 	return (NULL);
 }

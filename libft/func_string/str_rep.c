@@ -1,24 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   closing.c                                          :+:      :+:    :+:   */
+/*   str_rep.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 15:44:11 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/10 14:15:31 by fmontel          ###   ########.fr       */
+/*   Created: 2025/06/20 04:39:19 by fmontel           #+#    #+#             */
+/*   Updated: 2025/06/28 10:09:44 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
+#include "../headers/libft.h"
 
 /**
- * Exit the program and return 'excode'
- * - Change the excode depending on signals if needed
+ * Free the string (char *) s1 and return a duplicate of the string s2
  */
-void	closing(t_controller *cont)
+char	*str_rep(char *s1, char *s2)
 {
-	fd_printf(1, "exit\n");
-	controller_free(cont);
-	exit(cont->excode % 256);
+	free(s1);
+	return (str_dup(s2));
 }

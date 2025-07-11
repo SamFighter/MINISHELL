@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 14:25:36 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/10 17:27:00 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:32:44 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,10 @@ int	tk_type_infile(t_cmd **cmds, t_token **token)
 		else if (tk->string[1] == '<')
 			(*cmds)->tokens = tk_dup(cmds, tk, HEREDOC);
 		tk = tk->next;
-		(*cmds)->tokens = tk_initnext((*cmds)->tokens, 1);
 		if (!tk)
 			return (1);
-		if (ctn_smbl_tk(tk->string))
-		{
-			(*cmds)->tokens = tk_dup(cmds, NULL, INPUT);
-			return (1);
-		}
-		else
-			(*cmds)->tokens = tk_dup(cmds, tk, INPUT);
+		(*cmds)->tokens = tk_initnext((*cmds)->tokens, 1);
+		(*cmds)->tokens = tk_dup(cmds, tk, INPUT);
 		*token = tk;
 	}
 	else
@@ -61,16 +55,10 @@ int	tk_type_outfile(t_cmd **cmds, t_token **token)
 		else if (tk->string[1] == '>')
 			(*cmds)->tokens = tk_dup(cmds, tk, APPEND);
 		tk = tk->next;
-		(*cmds)->tokens = tk_initnext((*cmds)->tokens, 1);
 		if (!tk)
 			return (1);
-		if (ctn_smbl_tk(tk->string))
-		{
-			(*cmds)->tokens = tk_dup(cmds, NULL, OUTPUT);
-			return (1);
-		}
-		else
-			(*cmds)->tokens = tk_dup(cmds, tk, OUTPUT);
+		(*cmds)->tokens = tk_initnext((*cmds)->tokens, 1);
+		(*cmds)->tokens = tk_dup(cmds, tk, OUTPUT);
 		*token = tk;
 	}
 	else
@@ -122,18 +110,7 @@ void	tk_type_arg(t_cmd **cmds, t_token **token)
 	t_token	*tk;
 
 	tk = *token;
-	if (tk->string[0] == '"')
-	{
-		(*cmds)->tokens = tk_dup(cmds, tk, LIT_STR);
-	}
-	else if (tk->string[0] == '\'')
-	{
-		(*cmds)->tokens = tk_dup(cmds, tk, LIT_CHR);
-	}
-	else
-	{
-		(*cmds)->tokens = tk_dup(cmds, tk, ARG);
-	}
+	(*cmds)->tokens = tk_dup(cmds, tk, ARG);
 	(*cmds)->nb_tokens++;
 	*token = tk;
 }

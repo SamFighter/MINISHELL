@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+         #
+#    By: fmontel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/24 18:41:03 by salabbe           #+#    #+#              #
-#    Updated: 2025/05/20 15:50:05 by salabbe          ###   ########.fr        #
+#    Updated: 2025/07/08 18:49:36 by fmontel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,18 +27,23 @@ MANDATORY	= 		srcs/main.c 									\
 					srcs/closing.c 									\
 					srcs/controller_exec.c							\
 					srcs/prompt/prompt_controller.c 				\
+					srcs/tokenization/check_invalid.c 				\
 					srcs/tokenization/cmdlist_free.c 				\
-					srcs/tokenization/ctn_lit.c 					\
+					srcs/tokenization/ctn_quote.c 					\
+					srcs/tokenization/ctn_quote_both.c				\
 					srcs/tokenization/ctn_smbl.c 					\
 					srcs/tokenization/cmd_toarr.c 					\
 					srcs/tokenization/expander.c 					\
+					srcs/tokenization/expander_2.c 					\
 					srcs/tokenization/init_cmd.c 					\
 					srcs/tokenization/tk_init.c 					\
+					srcs/tokenization/tk_remnull.c 					\
+					srcs/tokenization/tk_utils.c 					\
 					srcs/tokenization/str_env.c						\
 					srcs/tokenization/tk_type_set.c					\
 					srcs/tokenization/cmd_tostart.c					\
 					srcs/tokenization/tokenizer.c 					\
-					srcs/tokenization/rem_lit.c 					\
+					srcs/tokenization/rem_quote.c 					\
 					srcs/debug/log_controller.c 					\
 					srcs/debug/print_controller.c 					\
 					srcs/debug/print_tokens.c			 			\
@@ -49,8 +54,8 @@ MANDATORY	= 		srcs/main.c 									\
 					srcs/builtins/ft_unset.c						\
 					srcs/builtins/ft_pwd.c							\
 					srcs/builtins/ft_env.c							\
-					srcs/builtins/builtin_utils.c					\
 					srcs/builtins/ft_exit.c							\
+					srcs/builtins/builtin_utils.c					\
 					srcs/exec/heredoc.c								\
 					srcs/exec/redirection.c							\
 					srcs/exec/envp_controller.c						\

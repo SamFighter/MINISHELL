@@ -83,6 +83,7 @@ static void	exec_pipeline(t_controller *cont)
 			if (pipe(pip) == -1)
 			{
 				perror("pipe");
+				cont->excode = 1;
 				return ;
 			}
 			current_pipe = pip;
@@ -99,10 +100,16 @@ int	exec(t_controller *cont)
 
 	cmd = cont->cmdlist.cmds;
 	if (!cmd || !cmd->str_cmd)
-		return (1);
+	{
+		cont->excode = 0;
+		return (0);
+	}
 	builtin_result = handle_single_builtin(cont, cmd);
 	if (builtin_result != -1)
+	{
+		cont->excode = builtin_result;
 		return (builtin_result);
+	}
 	exec_pipeline(cont);
 	wait_process(cont, cont->cmdlist.cmds);
 	return (cont->excode);

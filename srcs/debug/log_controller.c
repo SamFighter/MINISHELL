@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   log_controller.c                             :+:      :+:    :+:   */
+/*   log_controller.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 05:21:00 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/12 14:07:07 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:09:04 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ void	log_controller(t_controller *controller, int save)
 		ft_printf("	\033[1;93mNo Controller to print, aborted\033[0m\n\n");
 		return ;
 	}
+	cmd_tostart(&controller->cmdlist.cmds);
 	print_controller(controller);
+	cmd_tostart(&controller->cmdlist.cmds);
 	if (save)
 	{
 		fd = open("controller.log", O_CREAT | O_TRUNC | O_RDWR, 0777);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/19 14:35:06 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:13:43 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,17 @@ int	main(int argc, char **argv, char **env)
 		prompt = prompt_controller(cont.excode, cont.env);
 		line = readline(prompt);
 		free(prompt);
-		if (g_sig == 130 || g_sig == 139)
-			cont.excode = g_sig;
-		if (!line)
+		cont.excode = sig_value(cont.excode);
+		if (!line || cont.excode == 139)
 			closing(&cont);
 		if (str_len(line) != 0)
 		{
 			tokenizer(line, &cont);
 			controller_exec(&cont);
-			add_history(line);
+			if (cont.cmdlist.invalid != -1)
+				add_history(line);
 		}
 		cmdlist_reset(&cont.cmdlist);
 	}
-	return (cont.excode);
+	return (cont.excode % 256);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 14:48:03 by salabbe           #+#    #+#             */
-/*   Updated: 2025/06/17 11:11:57 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:41:34 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,17 +57,28 @@ int	check_cmd(t_controller *cont)
 	abs_path = get_path(path_env, cont->cmdlist.cmds);
 	if (!abs_path)
 	{
-		ft_printf("%s: command not found\n", cont->cmdlist.cmds->str_cmd);
-		return (-1);
+		fd_printf(2, "%s: command not found\n", cont->cmdlist.cmds->str_cmd);
+		free(path_env);
+		return (127);
 	}
 	free(abs_path);
+	free(path_env);
 	return (0);
 }
 
 void	handle_child_status(t_controller *cont, int pid, int status)
 {
-	if (pid == g_sig && WIFEXITED(status))
-		cont->excode = WEXITSTATUS(status);
-	else if (pid == g_sig && WIFSIGNALED(status))
-		cont->excode = 128 + WTERMSIG(status);
+	if (pid == g_sig)
+	{
+		if (WIFEXITED(status))
+			cont->excode = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			cont->excode = 128 + WTERMSIG(status);
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_printf("Quit (core dumped)\n");
+			else if (WTERMSIG(status) == SIGINT)
+				ft_printf("\n");
+		}
+	}
 }

@@ -12,6 +12,8 @@
 
 #include "../../headers/minishell.h"
 
+char	*get_env(char *s, char **env);
+
 /**
  * Return a string (char *) using the user environment-variable and exit-code
  */
@@ -21,11 +23,11 @@ char	*prompt_controller(int excode, char **env)
 	char	*tmp;
 
 	(void)env;
-	tmp = str_dup(search_envp("USER", env));
+	tmp = get_env("USER", env);
 	if (!tmp)
-		tmp = GST_USER;
+		tmp = str_rep(tmp, GST_USER);
 	if (str_ncmp(tmp, "root", 4) == 0)
-		tmp = ROT_USER;
+		tmp = str_rep(tmp, ROT_USER);
 	str = str_join(tmp, PROMPT);
 	if (excode == 0)
 		str = rep_mult_ctoa(str, '#', EXCODE_0);
@@ -33,10 +35,21 @@ char	*prompt_controller(int excode, char **env)
 		str = rep_mult_ctoa(str, '#', EXCODE_1);
 	else if (excode == 2)
 		str = rep_mult_ctoa(str, '#', EXCODE_2);
-	else if (excode <= 128)
+	else if (excode % 256 <= 128)
 		str = rep_mult_ctoa(str, '#', EXCODE_3);
 	else
 		str = rep_mult_ctoa(str, '#', EXCODE_4);
+	free(tmp);
+	return (str);
+}
+
+char	*get_env(char *s, char **env)
+{
+	char	*str;
+	char	*tmp;
+
+	tmp = search_envp(s, env);
+	str = env_cut(tmp);
 	free(tmp);
 	return (str);
 }

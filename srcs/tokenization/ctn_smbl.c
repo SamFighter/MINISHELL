@@ -33,7 +33,7 @@ int	ctn_smbl(char *str, int pos)
 		&& c != prev_c && !ctn_iswhitespace(prev_c))
 		return (1);
 	if ((prev_c == '|' || prev_c == '<' || prev_c == '>') && c != 0
-		&& prev_c != c && !ctn_iswhitespace(c))
+		&& (prev_c != c || (prev_c == '|' && c == '|')) && !ctn_iswhitespace(c))
 		return (1);
 	else
 		return (0);

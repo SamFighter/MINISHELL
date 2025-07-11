@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 15:14:38 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/06 16:24:45 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 17:55:03 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Compare the characters in the strings (char *) 's1' and 's2',
  * return the difference.
  */
-int	str_strcmp(char *s1, char *s2)
+int	str_cmp(char *s1, char *s2)
 {
 	int	i;
 

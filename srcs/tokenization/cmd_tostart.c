@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 10:58:40 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/13 17:32:44 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:31:22 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	cmd_tostart(t_cmd **cmd)
 {
 	t_token	*tk;
 
-	while ((*cmd)->next)
+	while ((*cmd) && (*cmd)->next)
 		(*cmd) = (*cmd)->next;
 	while ((*cmd)->prev)
 	{
@@ -47,5 +47,18 @@ void	tk_tostart(t_token **tk)
 		new_tk->prev->next = new_tk;
 		new_tk = new_tk->prev;
 	}
+	*tk = new_tk;
+}
+
+/**
+ * Find the last token of a token linked-list
+ */
+void	tk_tolast(t_token **tk)
+{
+	t_token	*new_tk;
+
+	new_tk = *tk;
+	while (new_tk->next)
+		new_tk = new_tk->next;
 	*tk = new_tk;
 }

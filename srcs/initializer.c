@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initializer.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 14:33:37 by fmontel           #+#    #+#             */
-/*   Updated: 2025/05/19 11:28:20 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:31:50 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,9 @@ void	init_cont(t_controller *controller);
  */
 void	initializer(t_controller *controller, char **env)
 {
+	init_sig();
 	init_cont(controller);
 	dup_env(controller, env);
-	(void)env;
-	init_sig();
 }
 
 void	init_sig(void)
