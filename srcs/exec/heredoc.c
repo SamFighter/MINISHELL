@@ -93,8 +93,8 @@ int	here_doc(char *eof)
 	fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		  free(tmp_name);
-		  return (-1);
+		free(tmp_name);
+		return (-1);
 	}
 	read_prompt(fd, dup_fd, eof);
 	fd = open(tmp_name, O_RDONLY);

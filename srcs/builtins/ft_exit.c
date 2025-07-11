@@ -1,7 +1,6 @@
 #include "../../headers/minishell.h"
 
-
-static void		print_error_exit(t_cmd *cmd)
+static void	print_error_exit(t_cmd *cmd)
 {
 	utl_putstr_fd("minishell: exit: ", 2);
 	utl_putstr_fd(cmd->cmd_args[1], 2);
@@ -77,4 +76,3 @@ int	ft_exit(t_controller *cont, t_cmd *cmd)
 	controller_free(cont);
 	exit(0);
 }
-

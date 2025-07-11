@@ -38,10 +38,15 @@ int	ft_cd(char **args, t_controller *cont)
 	if (!args || !args[0])
 		return (1);
 	old_pwd = getcwd(NULL, PATH_MAX);
+	if (!old_pwd)
+	{
+		printf("minishell : Actual directory destroyed, redirection to home\n");
+		rtn_chdir = chdir("/home");
+		return (1);
+	}
 	rtn_chdir = chdir(args[0]);
 	if (rtn_chdir == -1)
 	{
-		perror(args[0]);
 		free(old_pwd);
 		return (1);
 	}

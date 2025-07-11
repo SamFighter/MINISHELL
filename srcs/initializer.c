@@ -29,7 +29,7 @@ void	initializer(t_controller *controller, char **env)
 void	init_sig(void)
 {
 	signal(SIGINT, &sig_int);
-	// signal(SIGSEGV, &sig_segv);
+	signal(SIGSEGV, &sig_segv);
 	signal(SIGABRT, &sig_abrt);
 	signal(SIGQUIT, SIG_IGN);
 }

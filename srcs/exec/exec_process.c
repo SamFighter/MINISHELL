@@ -16,15 +16,15 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 {
 	char	*path;
 	char	*path_env;
-	int e_code;
+	int		e_code;
 
 	redir_in_out(cmd, pip);
 	if (is_builtin(cmd))
 	{
-	  prepare_builtin(cont, cmd);
-	  e_code = cont->excode;
-	  controller_free(cont);
-	  exit(e_code);
+		prepare_builtin(cont, cmd);
+		e_code = cont->excode;
+		controller_free(cont);
+		exit(e_code);
 	}
 	path_env = search_envp("PATH", cont->env);
 	path = get_path(path_env, cmd);
