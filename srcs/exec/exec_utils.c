@@ -33,7 +33,8 @@ static char	*try_path(char *env_path, int start, int end, char *cmd)
 		return (NULL);
 	if (access(full_path, F_OK | X_OK) == 0)
 		return (full_path);
-	return (free(full_path), NULL);
+	free(full_path);
+	return (NULL);
 }
 
 char	*search_in_path(char *str_envp, char *cmd)
@@ -64,8 +65,7 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 {
 	if (!cmd || !cmd->str_cmd)
 		return (NULL);
-	if (cmd->str_cmd[0] == '/' || \
-		(cmd->str_cmd[0] == '.' && cmd->str_cmd[1] == '/'))
+	if (ctn_strchr(cmd->str_cmd, '/'))
 	{
 		if (access(cmd->str_cmd, F_OK) == 0 && access(cmd->str_cmd, X_OK) == 0)
 			return (str_dup(cmd->str_cmd));
