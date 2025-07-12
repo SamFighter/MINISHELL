@@ -28,9 +28,10 @@ static int	export_no_args(t_controller *cont)
 		cut = env_cut(env[y]);
 		i = 0;
 		ft_printf("declare -x ");
-		while (env[y][i] != '=')
+		while (env[y][i] != '=' && env[y][i])
 			ft_printf("%c", env[y][i++]);
 		ft_printf("=\"%s\"\n", cut);
+		free(cut);
 		y++;
 	}
 	return (0);
@@ -83,9 +84,13 @@ static int	check_alr_env(char **env, char *str)
 char	*exportation(char *str, t_controller *cont)
 {
 	int	pos;
+	int	i;
 
 	if (!cont->env)
 		return (NULL);
+	i = 0;
+	while (str[i] && str[i] != '=')
+		i++;
 	pos = check_alr_env(cont->env, str);
 	if (pos >= 0)
 	{
@@ -96,7 +101,7 @@ char	*exportation(char *str, t_controller *cont)
 	}
 	else if (pos < 0)
 		cont->env = str_arrrep_nset(cont->env, str);
-	return (cont->env[utl_dbl_arrlen(cont->env)]);
+	return (cont->env[utl_dbl_arrlen(cont->env) - 1]);
 }
 
 int	ft_export(t_controller *cont, char **args)

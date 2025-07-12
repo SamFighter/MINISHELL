@@ -44,4 +44,5 @@ void	init_cont(t_controller *controller)
 	controller->env = NULL;
 	controller->cmdlist.tokens = tk_init();
 	controller->cmdlist.cmds = init_cmd();
+	controller->cmdlist.invalid = 0;
 }

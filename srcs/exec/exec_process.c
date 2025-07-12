@@ -34,7 +34,7 @@ static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 		exit(127);
 	}
 	args = str_rarrdup_nset(cmd->args, cmd->str_cmd);
-	execve(path, cmd->cmd_args, cont->env);
+	execve(path, args, cont->env);
 	free_contnpath(cont, args);
 	free(path_env);
 	free(path);
