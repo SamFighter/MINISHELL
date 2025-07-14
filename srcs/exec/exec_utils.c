@@ -33,8 +33,7 @@ static char	*try_path(char *env_path, int start, int end, char *cmd)
 		return (NULL);
 	if (access(full_path, F_OK | X_OK) == 0)
 		return (full_path);
-	free(full_path);
-	return (NULL);
+	return (free(full_path), NULL);
 }
 
 char	*search_in_path(char *str_envp, char *cmd)
@@ -65,7 +64,8 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 {
 	if (!cmd || !cmd->str_cmd)
 		return (NULL);
-	if (ctn_strchr(cmd->str_cmd, '/'))
+	if (cmd->str_cmd[0] == '/' || \
+		(cmd->str_cmd[0] == '.' && cmd->str_cmd[1] == '/'))
 	{
 		if (access(cmd->str_cmd, F_OK) == 0 && access(cmd->str_cmd, X_OK) == 0)
 			return (str_dup(cmd->str_cmd));
@@ -80,25 +80,17 @@ int	process_commands(t_controller *controller)
 {
 	t_token		*current_tok;
 	t_cmd		*current_cmd;
-	int			result;
 
 	current_tok = controller->cmdlist.cmds->tokens;
 	current_cmd = controller->cmdlist.cmds;
 	while (current_tok && current_cmd)
 	{
-		result = get_infile(current_tok, current_cmd);
-		if (result == 130)
-		{
-			controller->excode = 130;
-			return (130);
-		}
-		if ((result == 1 || get_outfile(current_tok, current_cmd) == 1)
-			&& g_sig != SIGINT)
+		if ((get_infile(current_tok, current_cmd) == 1 || \
+			get_outfile(current_tok, current_cmd) == 1) && g_sig != SIGINT)
 		{
 			fd_printf(2, "minihell: syntax error");
 			fd_printf(2, " near unexpected token `newline'\n");
-			controller->excode = 2;
-			return (2);
+			return (1);
 		}
 		while (current_tok && current_tok->type != PIPE)
 			current_tok = current_tok->next;

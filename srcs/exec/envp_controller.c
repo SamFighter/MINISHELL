@@ -98,13 +98,12 @@ char	*env_cut(char *str)
 {
 	int		i;
 	char	*cut;
+
 	i = 0;
 	if (!str)
 		return (NULL);
-	while (str[i] && str[i] != '=')
+	while (str[i] != '=')
 		i++;
-	if (str[i] != '=')
-		return (str_dup(""));
 	cut = str_substr(str, i + 1, str_len(str) - (i + 1));
 	return (cut);
 }

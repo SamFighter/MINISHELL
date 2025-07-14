@@ -46,19 +46,28 @@ int	check_path(char *path, char *cmd)
 	return (result);
 }
 
-void	handle_child_status(t_controller *cont, int pid, int status, int last_pid)
+int	check_cmd(t_controller *cont)
 {
-	if (pid == last_pid)
+	char	*abs_path;
+	char	*path_env;
+
+	if (!cont || !cont->cmdlist.cmds || !cont->cmdlist.cmds->str_cmd)
+		return (-1);
+	path_env = search_envp("PATH", cont->env);
+	abs_path = get_path(path_env, cont->cmdlist.cmds);
+	if (!abs_path)
 	{
-		if (WIFEXITED(status))
-			cont->excode = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-		{
-			cont->excode = 128 + WTERMSIG(status);
-			if (WTERMSIG(status) == SIGQUIT)
-				ft_printf("Quit (core dumped)\n");
-			else if (WTERMSIG(status) == SIGINT)
-				ft_printf("\n");
-		}
+		fd_printf(2, "%s: command not found\n", cont->cmdlist.cmds->str_cmd);
+		return (-1);
 	}
+	free(abs_path);
+	return (0);
+}
+
+void	handle_child_status(t_controller *cont, int pid, int status)
+{
+	if (pid == g_sig && WIFEXITED(status))
+		cont->excode = WEXITSTATUS(status);
+	else if (pid == g_sig && WIFSIGNALED(status))
+		cont->excode = 128 + WTERMSIG(status);
 }
