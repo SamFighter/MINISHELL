@@ -21,16 +21,17 @@ static int	export_no_args(t_controller *cont)
 
 	env = cont->env;
 	if (!env)
-		return (1);
+		return (0);
 	y = 0;
 	while (env[y])
 	{
 		cut = env_cut(env[y]);
 		i = 0;
 		ft_printf("declare -x ");
-		while (env[y][i] != '=')
+		while (env[y][i] != '=' && env[y][i])
 			ft_printf("%c", env[y][i++]);
 		ft_printf("=\"%s\"\n", cut);
+		free(cut);
 		y++;
 	}
 	return (0);
@@ -83,9 +84,13 @@ static int	check_alr_env(char **env, char *str)
 char	*exportation(char *str, t_controller *cont)
 {
 	int	pos;
+	int	i;
 
 	if (!cont->env)
 		return (NULL);
+	i = 0;
+	while (str[i] && str[i] != '=')
+		i++;
 	pos = check_alr_env(cont->env, str);
 	if (pos >= 0)
 	{
@@ -96,7 +101,7 @@ char	*exportation(char *str, t_controller *cont)
 	}
 	else if (pos < 0)
 		cont->env = str_arrrep_nset(cont->env, str);
-	return (cont->env[utl_dbl_arrlen(cont->env)]);
+	return (cont->env[utl_dbl_arrlen(cont->env) - 1]);
 }
 
 int	ft_export(t_controller *cont, char **args)
@@ -106,8 +111,7 @@ int	ft_export(t_controller *cont, char **args)
 	j = 0;
 	if (!args || !args[j])
 	{
-		if (cont->env && export_no_args(cont))
-			ft_printf("export: invalid identifier\n");
+		export_no_args(cont);
 		cont->excode = 0;
 		return (cont->excode);
 	}
@@ -115,11 +119,14 @@ int	ft_export(t_controller *cont, char **args)
 	{
 		if (syntax_export(args[j]) != 0)
 		{
-			ft_printf("export: invalid identifier\n");
+			fd_printf(2, "export: invalid identifier\n", args[j]);
 			cont->excode = 1;
 		}
 		else if (!exportation(args[j], cont))
+		{
+			cont->excode = 1;
 			return (cont->excode);
+		}
 		j++;
 	}
 	return (cont->excode);

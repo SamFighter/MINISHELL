@@ -72,9 +72,9 @@ static char	*get_tmp_name(void)
 	if (!tmp)
 		return (result);
 	free(tmp);
-	tmp = str_join(result, "_");
+	tmp = str_join(result, ".tmp");
 	free(result);
-	result = str_join(tmp, tmp);
+	result = str_join("/tmp/", tmp);
 	free(tmp);
 	return (result);
 }

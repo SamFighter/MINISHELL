@@ -27,7 +27,7 @@ int	tokenizer(char *str, t_controller *cont)
 	g_sig = 0;
 	while (str && ctn_iswhitespace(*str))
 		str++;
-	if (!str || *str == 0)
+	if (*str == 0)
 	{
 		cont->cmdlist.invalid = -1;
 		return (0);
@@ -43,7 +43,7 @@ int	tokenizer(char *str, t_controller *cont)
 	if (cmdlist->invalid == 0)
 		cmdlist->invalid = check_invalid(&cmdlist->cmds);
 	cmd_tostart(&cmdlist->cmds);
-	log_controller(cont, 1);
+	//log_controller(cont, 1);
 	return (1);
 }
 
@@ -52,20 +52,21 @@ int	tokenizer(char *str, t_controller *cont)
  */
 void	getlen_token(char *str, t_cmdlist *cmdlist)
 {
-	int	quote;
+	int	lit;
 	int	i;
 
-	quote = 0;
+	lit = 0;
 	i = -1;
-	while (str && str[++i])
+	while (str[++i])
 	{
+		lit = ctn_quote(str, i, lit);
 		cmdlist->tokens->len++;
-		if (i > 0 && quote == 0 && ctn_smbl(str, i) == 1)
+		if (lit == 0 && i > 0 && ctn_smbl(str, i) == 1)
 		{
 			cmdlist->tokens = tk_initnext(cmdlist->tokens, str[i + 1]);
 			cmdlist->tokens->len++;
 		}
-		if ((quote == 0 && ctn_iswhitespace(str[i])
+		if ((lit == 0 && ctn_iswhitespace(str[i])
 				&& cmdlist->tokens->len > 0))
 		{
 			while (str[i] && ctn_iswhitespace(str[i]))
@@ -74,9 +75,8 @@ void	getlen_token(char *str, t_cmdlist *cmdlist)
 				return (tk_end(cmdlist->tokens));
 			cmdlist->tokens = tk_initnext(cmdlist->tokens, str[--i + 1]);
 		}
-		quote = ctn_quote(str, i, quote);
 	}
-	cmdlist->invalid = quote;
+	cmdlist->invalid = lit;
 }
 
 /**
@@ -89,7 +89,7 @@ void	create_tokens(char *str, t_cmdlist *cmdlist)
 
 	i = 0;
 	tk = cmdlist->tokens;
-	while (tk && str && str[i])
+	while (tk && str[i])
 	{
 		while (str[i] && ctn_iswhitespace(str[i]))
 			++i;

@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 14:25:36 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/12 15:39:26 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/08 18:32:44 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	tk_type_infile(t_cmd **cmds, t_token **token)
 	t_token	*tk;
 
 	tk = *token;
-	if (tk && tk->string[0] == '<')
+	if (tk->string[0] == '<')
 	{
 		if (tk->string[1] == 0)
 			(*cmds)->tokens = tk_dup(cmds, tk, IN);
@@ -48,7 +48,7 @@ int	tk_type_outfile(t_cmd **cmds, t_token **token)
 	t_token	*tk;
 
 	tk = *token;
-	if (tk && tk->string[0] == '>')
+	if (tk->string[0] == '>')
 	{
 		if (tk->string[1] == 0)
 			(*cmds)->tokens = tk_dup(cmds, tk, OUT);
@@ -91,7 +91,7 @@ void	tk_type_pipe(t_cmd **cmds, t_token **token)
 
 	tk = *token;
 	(*cmds)->tokens = tk_dup(cmds, tk, PIPE);
-	if (tk && tk->next)
+	if (tk->next)
 	{
 		tk = tk->next;
 		*token = tk;

@@ -34,7 +34,6 @@ void	cmdlist_free(t_cmdlist *cmdlist)
 	tk_free(cmdlist->tokens);
 	cmdlist->tokens = NULL;
 	cmd_free(cmdlist->cmds);
-	cmdlist->cmds->tokens = NULL;
 	cmdlist->cmds = NULL;
 }
 
@@ -47,10 +46,8 @@ void	tk_free(t_token *tk)
 	{
 		if (tk->prev)
 			free(tk->prev);
-		tk->prev = NULL;
 		if (tk->string)
 			free(tk->string);
-		tk->string = NULL;
 		if (tk->env_str)
 			utl_super_free((void **)tk->env_str);
 		if (tk->next)
@@ -72,7 +69,6 @@ void	cmd_free(t_cmd *cmd)
 	{
 		if (cmd->prev)
 			free(cmd->prev);
-		cmd->prev = NULL;
 		if (cmd->args)
 			utl_super_free((void **)cmd->args);
 		if (cmd->outfiles)
@@ -81,7 +77,6 @@ void	cmd_free(t_cmd *cmd)
 			utl_super_free((void **)cmd->infiles);
 		if (cmd->str_cmd)
 			free(cmd->str_cmd);
-		cmd->str_cmd = NULL;
 		cmd->nb_tokens = 0;
 		cmd->has_cmd = 0;
 		tk_free(cmd->tokens);

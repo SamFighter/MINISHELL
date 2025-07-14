@@ -12,21 +12,18 @@
 
 #include "../../headers/minishell.h"
 
-void	free_contnpath(t_controller *cont, char	**args);
+void	free_contnpath(t_controller *cont, char	**args)
+{
+	utl_super_free((void **) args);
+	controller_free(cont);
+}
 
-static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
+static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 {
 	char	*path;
 	char	*path_env;
 	char	**args;
 
-	redir_in_out(cmd, pip);
-	if (is_builtin(cmd))
-	{
-	  prepare_builtin(cont, cmd);
-	  controller_free(cont);
-	  exit(cont->excode % 256);
-	}
 	path_env = search_envp("PATH", cont->env);
 	path = get_path(path_env, cmd);
 	if (!path)
@@ -37,11 +34,31 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 		exit(127);
 	}
 	args = str_rarrdup_nset(cmd->args, cmd->str_cmd);
-	execve(path, cmd->args, cont->env);
+	execve(path, args, cont->env);
 	free_contnpath(cont, args);
 	free(path_env);
+	free(path);
 	controller_free(cont);
 	exit(126);
+}
+
+static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
+{
+	int result;
+
+	result = 0;
+	if (redir_in_out(cmd, pip) == -1)
+	{
+		controller_free(cont);
+		exit(1);
+	}
+	if (is_builtin(cmd))
+	{
+		result = prepare_builtin(cont, cmd);
+		controller_free(cont);
+		exit(result);
+	}
+	exec_external_cmd(cont, cmd);
 }
 
 static void	exec_parent(t_cmd *cmd, int *pip)
@@ -74,13 +91,7 @@ void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 		exec_child(cont, cmd, pip);
 	else
 	{
-		g_sig = pid;
+		cmd->pid = pid;
 		exec_parent(cmd, pip);
 	}
-}
-
-void	free_contnpath(t_controller *cont, char	**args)
-{
-	utl_super_free((void **) args);
-	controller_free(cont);
 }

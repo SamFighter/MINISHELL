@@ -39,8 +39,8 @@ static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 	new_fd = get_fd(tok->next->string, type);
 	if (new_fd < 0)
 	{
-		if (type == HEREDOC)
-			return (SIGINT);
+		if (type == HEREDOC && g_sig == SIGINT)
+			return (130);
 		return (1);
 	}
 	if (cmd->fd_inf >= 0)
@@ -52,6 +52,7 @@ static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 int	get_infile(t_token *tok, t_cmd *cmd)
 {
 	t_token	*tmp;
+	int		res;
 
 	tmp = tok;
 	while (tmp && tmp->type != PIPE)
@@ -60,8 +61,9 @@ int	get_infile(t_token *tok, t_cmd *cmd)
 		{
 			if (!tmp->next || !tmp->next->string)
 				return (1);
-			if (handle_input_redirect(tmp, cmd, tmp->type))
-				return (1);
+			res = handle_input_redirect(tmp, cmd, tmp->type);
+			if (res != 0)
+				return (res);
 			tmp = tmp->next;
 		}
 		tmp = tmp->next;
@@ -71,19 +73,23 @@ int	get_infile(t_token *tok, t_cmd *cmd)
 
 static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 {
+	int	new_fd;
+
 	if (cmd->fd_out >= 0)
 		close(cmd->fd_out);
 	if (!tok->next || !tok->next->string)
 		return (1);
-	cmd->fd_out = get_fd(tok->next->string, type);
-	if (cmd->fd_out < 0)
+	new_fd = get_fd(tok->next->string, type);
+	if (new_fd < 0)
 		return (1);
+	cmd->fd_out = new_fd;
 	return (0);
 }
 
 int	get_outfile(t_token *tok, t_cmd *cmd)
 {
-	t_token		*tmp;
+	t_token	*tmp;
+	int		result;
 
 	tmp = tok;
 	while (tmp && tmp->type != PIPE)
@@ -92,8 +98,9 @@ int	get_outfile(t_token *tok, t_cmd *cmd)
 		{
 			if (!tmp->next || !tmp->next->string || tmp->next->type == PIPE)
 				return (1);
-			if (handle_output_redirect(tmp, cmd, tmp->type))
-				return (1);
+			result = handle_output_redirect(tmp, cmd, tmp->type);
+			if (result != 0)
+				return (result);
 			tmp = tmp->next;
 		}
 		tmp = tmp->next;

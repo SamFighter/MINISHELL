@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 11:19:52 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/12 15:55:44 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/10 15:07:40 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ t_token	*tk_expand(t_token *tk, char **env)
 		str = env_cut(tmp);
 		if (str && (tk->type != INPUT || (tk->type == INPUT
 					&& tk->prev && tk->prev->type != HEREDOC)))
-			tk = expand_env(tk, tk->env_str[i], str);
+			tk = expand_env(tk, tk->env_str[i--], str);
 		else if ((tk->type != INPUT))
-			tk->string = rep_mult_atoa(tk->string, tk->env_str[i], NULL);
+			tk->string = rep_mult_atoa(tk->string, tk->env_str[i--], NULL);
 		free(tmp);
 		free(str);
 		i++;
@@ -88,7 +88,7 @@ t_token	*expand_env(t_token *tk, char *env, char *str)
 		quote = ctn_quote_both(tk->string, i, quote);
 		if (tk->string[i] == '$' && str_nlstr(tk->string, env, i) && quote == 1)
 		{
-			tk->string = rep_latoa(tk->string, env, str, i);
+			tk->string = rep_latoa(tk->string, env, str, i + 1);
 			i += str_len(str);
 		}
 		else if (tk->string[i] == '$'
