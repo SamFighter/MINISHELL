@@ -27,6 +27,7 @@ char		**str_arrrep(char **strarr, char *str, int pos);
 char		**str_arrrep_nset(char **strarr, char *str);
 char		**str_rarrrep(char **strarr);
 char		**str_rarrrep_nset(char **strarr, char *str);
+char		**str_arrdup_nrem(char **strarr, int rem);
 char		**str_split(char const *s, char c);
 char		*str_join(char const *s1, char const *s2);
 char		*str_rejoin(char *s1, char *s2);

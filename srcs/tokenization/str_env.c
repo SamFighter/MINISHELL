@@ -26,7 +26,7 @@ char	*str_env(char *str, int start)
 	s = NULL;
 	if (!str || (size_t)start >= str_len(str)
 		|| (!ctn_isalpha(str[start + 1]) && !(str[start + 1] == '_')
-		&& !(str[start + 1] == '?') && !(str[start + 1] == '_')))
+			&& !(str[start + 1] == '?') && !(str[start + 1] == '_')))
 		return (s);
 	start = ctn_strlnchr(str, '$', start);
 	while (str[i + start] && (ctn_isalnum((int)str[i + start])

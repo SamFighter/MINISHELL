@@ -33,6 +33,7 @@ static int	read_prompt(int fd, int fd2, char *str)
 {
 	char	*prompt;
 
+	signal(SIGINT, sig_hd);
 	prompt = NULL;
 	while (1)
 	{
@@ -87,16 +88,17 @@ int	here_doc(char *eof)
 
 	tmp_name = get_tmp_name();
 	dup_fd = dup(0);
-	signal(SIGINT, sig_hd);
 	if (!tmp_name)
 		return (-1);
 	fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		  free(tmp_name);
-		  return (-1);
+		free(tmp_name);
+		close(dup_fd);
+		return (-1);
 	}
 	read_prompt(fd, dup_fd, eof);
+	close(fd);
 	fd = open(tmp_name, O_RDONLY);
 	if (fd > 0)
 		unlink(tmp_name);

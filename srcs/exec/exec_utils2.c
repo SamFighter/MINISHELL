@@ -46,7 +46,8 @@ int	check_path(char *path, char *cmd)
 	return (result);
 }
 
-void	handle_child_status(t_controller *cont, int pid, int status, int last_pid)
+void	handle_child_status(t_controller *cont, int pid, int status,
+	int last_pid)
 {
 	if (pid == last_pid)
 	{

@@ -44,7 +44,7 @@ static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 
 static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 {
-	int result;
+	int	result;
 
 	result = 0;
 	if (redir_in_out(cmd, pip) == -1)

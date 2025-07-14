@@ -21,7 +21,7 @@ int	tk_type_infile(t_cmd **cmds, t_token **token)
 	t_token	*tk;
 
 	tk = *token;
-	if (tk->string[0] == '<')
+	if (tk && tk->string[0] == '<')
 	{
 		if (tk->string[1] == 0)
 			(*cmds)->tokens = tk_dup(cmds, tk, IN);
@@ -48,7 +48,7 @@ int	tk_type_outfile(t_cmd **cmds, t_token **token)
 	t_token	*tk;
 
 	tk = *token;
-	if (tk->string[0] == '>')
+	if (tk && tk->string[0] == '>')
 	{
 		if (tk->string[1] == 0)
 			(*cmds)->tokens = tk_dup(cmds, tk, OUT);
@@ -91,7 +91,7 @@ void	tk_type_pipe(t_cmd **cmds, t_token **token)
 
 	tk = *token;
 	(*cmds)->tokens = tk_dup(cmds, tk, PIPE);
-	if (tk->next)
+	if (tk && tk->next)
 	{
 		tk = tk->next;
 		*token = tk;

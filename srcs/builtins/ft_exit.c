@@ -12,8 +12,7 @@
 
 #include "../../headers/minishell.h"
 
-
-static void		print_error_exit(t_cmd *cmd)
+static void	print_error_exit(t_cmd *cmd)
 {
 	fd_printf(2, "minihell: exit: %s", cmd->args[0]);
 	fd_printf(2, ": numeric argument required\n");

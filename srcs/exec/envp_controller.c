@@ -98,6 +98,7 @@ char	*env_cut(char *str)
 {
 	int		i;
 	char	*cut;
+
 	i = 0;
 	if (!str)
 		return (NULL);

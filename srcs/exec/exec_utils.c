@@ -76,6 +76,28 @@ char	*get_path(char *str_envp, t_cmd *cmd)
 	return (search_in_path(str_envp, cmd->str_cmd));
 }
 
+static int	process_single_command(t_token *cur_tok, t_cmd *cur_cmd,
+	t_controller *cont)
+{
+	int	result;
+
+	result = get_infile(cur_tok, cur_cmd);
+	if (result == 130)
+	{
+		cont->excode = 130;
+		return (130);
+	}
+	if ((result == 1 || get_outfile(cur_tok, cur_cmd) == 1)
+		&& g_sig != SIGINT)
+	{
+		fd_printf(2, "minihell: syntax error");
+		fd_printf(2, " near unexpected token `newline'\n");
+		cont->excode = 2;
+		return (2);
+	}
+	return (0);
+}
+
 int	process_commands(t_controller *controller)
 {
 	t_token		*current_tok;
@@ -86,20 +108,9 @@ int	process_commands(t_controller *controller)
 	current_cmd = controller->cmdlist.cmds;
 	while (current_tok && current_cmd)
 	{
-		result = get_infile(current_tok, current_cmd);
-		if (result == 130)
-		{
-			controller->excode = 130;
-			return (130);
-		}
-		if ((result == 1 || get_outfile(current_tok, current_cmd) == 1)
-			&& g_sig != SIGINT)
-		{
-			fd_printf(2, "minihell: syntax error");
-			fd_printf(2, " near unexpected token `newline'\n");
-			controller->excode = 2;
-			return (2);
-		}
+		result = process_single_command(current_tok, current_cmd, controller);
+		if (result != 0)
+			return (result);
 		while (current_tok && current_tok->type != PIPE)
 			current_tok = current_tok->next;
 		if (current_tok && current_tok->type == PIPE)

@@ -59,3 +59,17 @@ char	**str_arrrep_nset(char **strarr, char *str)
 	utl_super_free((void **)strarr);
 	return (s);
 }
+
+/**
+ * @brief Replace an array of strings (char **) with a copy of 'strarr'
+ * and remove the string at position 'rem'
+ * @warning - 'strarr' is freed at the end
+ */
+char	**str_arrrep_nrem(char **strarr, int rem)
+{
+	char	**s;
+
+	s = str_arrdup_nrem(strarr, rem);
+	utl_super_free((void **)strarr);
+	return (s);
+}

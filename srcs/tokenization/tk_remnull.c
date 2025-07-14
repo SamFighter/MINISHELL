@@ -21,7 +21,7 @@ void	tk_remnull(t_cmd **cmds)
 	if (!(*cmds) || !(*cmds)->tokens)
 		return ;
 	cmd = *cmds;
-		cmd_tostart(&cmd);
+	cmd_tostart(&cmd);
 	while (cmd)
 	{
 		tk_tostart(&cmd->tokens);

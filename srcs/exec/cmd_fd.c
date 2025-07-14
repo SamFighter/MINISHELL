@@ -32,7 +32,7 @@ static int	get_fd(char *filename, int type)
 
 static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 {
-	int new_fd;
+	int	new_fd;
 
 	if (!tok->next || !tok->next->string)
 		return (1);

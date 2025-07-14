@@ -20,10 +20,10 @@
 # define INPUT		5
 # define OUTPUT		6
 # define PIPE		9
-# define IN			-1	//<
-# define OUT		-2	//>
-# define HEREDOC	-3	//<<
-# define APPEND		-4	//>>
+# define IN			-1
+# define OUT		-2
+# define HEREDOC	-3
+# define APPEND		-4
 
 //----------------   structs   ---------------------------------
 
