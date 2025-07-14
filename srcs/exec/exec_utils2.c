@@ -46,29 +46,9 @@ int	check_path(char *path, char *cmd)
 	return (result);
 }
 
-int	check_cmd(t_controller *cont)
+void	handle_child_status(t_controller *cont, int pid, int status, int last_pid)
 {
-	char	*abs_path;
-	char	*path_env;
-
-	if (!cont || !cont->cmdlist.cmds || !cont->cmdlist.cmds->str_cmd)
-		return (-1);
-	path_env = search_envp("PATH", cont->env);
-	abs_path = get_path(path_env, cont->cmdlist.cmds);
-	if (!abs_path)
-	{
-		fd_printf(2, "%s: command not found\n", cont->cmdlist.cmds->str_cmd);
-		free(path_env);
-		return (127);
-	}
-	free(abs_path);
-	free(path_env);
-	return (0);
-}
-
-void	handle_child_status(t_controller *cont, int pid, int status)
-{
-	if (pid == g_sig)
+	if (pid == last_pid)
 	{
 		if (WIFEXITED(status))
 			cont->excode = WEXITSTATUS(status);

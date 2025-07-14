@@ -23,13 +23,9 @@ void	controller_exec(t_controller *controller)
 		return ;
 	if (controller->cmdlist.invalid != 0)
 		invalid_print(controller);
-	else if (process_commands(controller) != 1)
-	{
-		controller->excode = process_commands(controller);
-		exec(controller);
-	}
-	else
-		controller->excode = 2;
+	controller->excode = process_commands(controller);
+	exec(controller);
+	controller->excode = 2;
 }
 
 void	invalid_print(t_controller *controller)

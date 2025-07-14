@@ -92,8 +92,8 @@ int	process_commands(t_controller *controller)
 			controller->excode = 130;
 			return (130);
 		}
-		if ((result == 1 || get_outfile(current_tok, current_cmd) == 1) && \
-			g_sig != SIGINT)
+		if ((result == 1 || get_outfile(current_tok, current_cmd) == 1)
+			&& g_sig != SIGINT)
 		{
 			fd_printf(2, "minihell: syntax error");
 			fd_printf(2, " near unexpected token `newline'\n");

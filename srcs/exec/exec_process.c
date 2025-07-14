@@ -44,6 +44,9 @@ static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 
 static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 {
+	int result;
+
+	result = 0;
 	if (redir_in_out(cmd, pip) == -1)
 	{
 		controller_free(cont);
@@ -51,9 +54,9 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 	}
 	if (is_builtin(cmd))
 	{
-		prepare_builtin(cont, cmd);
+		result = prepare_builtin(cont, cmd);
 		controller_free(cont);
-		exit(cont->excode);
+		exit(result);
 	}
 	exec_external_cmd(cont, cmd);
 }
@@ -88,7 +91,7 @@ void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 		exec_child(cont, cmd, pip);
 	else
 	{
-		g_sig = pid;
+		cmd->pid = pid;
 		exec_parent(cmd, pip);
 	}
 }

@@ -28,16 +28,26 @@ void	handle_exec_error(char *path, char *path_env, int *pip)
 
 static void	wait_process(t_controller *cont, t_cmd *start_cmd)
 {
-	int	status;
-	int	pid;
-	int	cmd_count;
+	int		status;
+	int		pid;
+	int		cmd_count;
+	int		last_pid;
+	t_cmd	*tmp;
 
+	tmp = start_cmd;
+	last_pid = -1;
+	while (tmp)
+	{
+		if (tmp->pid > 0)
+			last_pid = tmp->pid;
+		tmp = tmp->next;
+	}
 	cmd_count = len_cmd(start_cmd);
 	while (cmd_count > 0)
 	{
 		pid = waitpid(-1, &status, 0);
 		if (pid > 0)
-			handle_child_status(cont, pid, status);
+			handle_child_status(cont, pid, status, last_pid);
 		cmd_count--;
 	}
 }
