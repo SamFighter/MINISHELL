@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/08 23:25:52 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/12 17:03:31 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@
 # define INPUT		5
 # define OUTPUT		6
 # define PIPE		9
-# define IN			-1	//<
-# define OUT		-2	//>
-# define HEREDOC	-3	//<<
-# define APPEND		-4	//>>
+# define IN			-1
+# define OUT		-2
+# define HEREDOC	-3
+# define APPEND		-4
 
 //----------------   structs   ---------------------------------
 
@@ -65,7 +65,6 @@ typedef struct s_cmd
 	char			**outfiles;
 	int				fd_inf;
 	int				fd_out;
-	pid_t			pid;
 	struct s_cmd	*prev;
 	struct s_cmd	*next;
 }	t_cmd;

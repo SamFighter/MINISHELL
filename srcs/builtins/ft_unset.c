@@ -69,9 +69,9 @@ static bool	unset(t_controller *cont, char *str)
 
 	if (!str)
 		return (false);
-	if (check_syntax(str) != 0)
+	if (check_syntax(str))
 	{
-		fd_printf(2, "unset: `%s': not a valid identifier\n", str);
+		ft_printf("unset : invalid indentifier\n");
 		return (true);
 	}
 	pos = check_alr_env(cont->env, str);
@@ -93,11 +93,6 @@ int	ft_unset(char **str, t_controller *cont)
 {
 	int		j;
 
-	if (!str)
-	{
-		cont->excode = 0;
-		return (0);
-	}
 	j = 0;
 	while (str[j])
 	{
