@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: salabbe <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 13:43:52 by salabbe           #+#    #+#             */
 /*   Updated: 2025/07/08 19:03:23 by fmontel          ###   ########.fr       */
@@ -29,11 +29,10 @@ void	sig_hd(int sig)
 	close(0);
 }
 
-static int	read_prompt(int fd, int fd2, char *str)
+static int	read_prompt(int fd, char *str)
 {
 	char	*prompt;
 
-	signal(SIGINT, sig_hd);
 	prompt = NULL;
 	while (1)
 	{
@@ -48,11 +47,9 @@ static int	read_prompt(int fd, int fd2, char *str)
 			free(prompt);
 			break ;
 		}
-		write(fd, prompt, str_len(prompt));
-		write(fd, "\n", 1);
+		fd_printf(fd, "%s\n", prompt);
 		free(prompt);
 	}
-	dup2(fd2, 0);
 	return (0);
 }
 
@@ -83,26 +80,24 @@ static char	*get_tmp_name(void)
 int	here_doc(char *eof)
 {
 	int		fd;
-	int		dup_fd;
 	char	*tmp_name;
 
 	tmp_name = get_tmp_name();
-	dup_fd = dup(0);
 	if (!tmp_name)
 		return (-1);
 	fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
 		free(tmp_name);
-		close(dup_fd);
 		return (-1);
 	}
-	read_prompt(fd, dup_fd, eof);
+	signal(SIGINT, sig_hd);
+	read_prompt(fd, eof);
+	signal(SIGINT, sig_int);
 	close(fd);
 	fd = open(tmp_name, O_RDONLY);
 	if (fd > 0)
 		unlink(tmp_name);
 	free(tmp_name);
-	close(dup_fd);
 	return (fd);
 }

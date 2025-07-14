@@ -68,7 +68,7 @@ static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
 		dup2(stdout_copy, STDOUT_FILENO);
 		close(stdin_copy);
 		close(stdout_copy);
-		return (1);
+		return (-1);
 	}
 	result = prepare_builtin(cont, cmd);
 	dup2(stdin_copy, STDIN_FILENO);

@@ -116,6 +116,7 @@ void	handle_child_status(t_controller *cont, int pid, int status, int last_pid);
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip);
 void	handle_exec_error(char *path, char *path_env, int *pip);
 int		process_commands(t_controller *controller);
-int		ft_exit(t_controller *cont, t_cmd *cmd);;
+int		ft_exit(t_controller *cont, t_cmd *cmd);
+void	close_remaining_fds(t_cmd *cmd, int *pip);
 
 #endif

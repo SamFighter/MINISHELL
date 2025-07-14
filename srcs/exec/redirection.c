@@ -22,6 +22,7 @@ static int	handle_input_redirection(t_cmd *cmd)
 			return (-1);
 		}
 		close(cmd->fd_inf);
+		cmd->fd_inf = -1;
 	}
 	return (0);
 }
@@ -36,6 +37,7 @@ static int	handle_output_redirection(t_cmd *cmd, int *pip)
 			return (-1);
 		}
 		close(cmd->fd_out);
+		cmd->fd_out = -1;
 	}
 	else if (pip != NULL)
 	{
@@ -44,6 +46,7 @@ static int	handle_output_redirection(t_cmd *cmd, int *pip)
 			perror("dup2 pipe");
 			return (-1);
 		}
+		close(pip[1]);
 	}
 	return (0);
 }
@@ -54,11 +57,6 @@ int	redir_in_out(t_cmd *cmd, int *pip)
 		return (-1);
 	if (handle_output_redirection(cmd, pip) == -1)
 		return (-1);
-	if (pip != NULL)
-	{
-		close(pip[0]);
-		close(pip[1]);
-	}
 	return (0);
 }
 

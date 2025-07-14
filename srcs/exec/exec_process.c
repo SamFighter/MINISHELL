@@ -49,9 +49,11 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 	result = 0;
 	if (redir_in_out(cmd, pip) == -1)
 	{
+		close_remaining_fds(cmd, pip);
 		controller_free(cont);
 		exit(1);
 	}
+	close_remaining_fds(cmd, pip);
 	if (is_builtin(cmd))
 	{
 		result = prepare_builtin(cont, cmd);
@@ -71,10 +73,16 @@ static void	exec_parent(t_cmd *cmd, int *pip)
 		else
 			close(pip[0]);
 	}
-	if (cmd->fd_inf > 2)
+	if (cmd->fd_inf > 2 && cmd->fd_inf != -1)
+	{
 		close(cmd->fd_inf);
-	if (cmd->fd_out > 2)
+		cmd->fd_inf = -1;
+	}
+	if (cmd->fd_out > 2 && cmd->fd_out != -1)
+	{
 		close(cmd->fd_out);
+		cmd->fd_out = -1;
+	}
 }
 
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
