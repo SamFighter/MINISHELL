@@ -58,7 +58,7 @@ char	*search_in_path(char *str_envp, char *cmd)
 		}
 		i++;
 	}
-	return (try_path(str_envp, start, i, cmd));
+	return (try_path(env_cut(str_envp), start, i, cmd));
 }
 
 char	*get_path(char *str_envp, t_cmd *cmd)

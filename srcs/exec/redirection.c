@@ -21,7 +21,7 @@ static int	handle_input_redirection(t_cmd *cmd)
 			perror("dup2 input");
 			return (-1);
 		}
-		close(cmd->fd_inf);
+		safe_close(cmd->fd_inf);
 		cmd->fd_inf = -1;
 	}
 	return (0);
@@ -36,17 +36,18 @@ static int	handle_output_redirection(t_cmd *cmd, int *pip)
 			perror("dup2 output");
 			return (-1);
 		}
-		close(cmd->fd_out);
+		safe_close(cmd->fd_out);
 		cmd->fd_out = -1;
 	}
-	else if (pip != NULL)
+	else if (pip)
 	{
 		if (dup2(pip[1], STDOUT_FILENO) == -1)
 		{
 			perror("dup2 pipe");
 			return (-1);
 		}
-		close(pip[1]);
+		safe_close(pip[1]);
+		safe_close(pip[0]);
 	}
 	return (0);
 }

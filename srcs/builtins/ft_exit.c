@@ -65,14 +65,14 @@ int	ft_exit(t_controller *cont, t_cmd *cmd)
 {
 	long	code;
 
-	utl_putstr_fd("exit\n", 2);
+	if (!cmd->next)
+		utl_putstr_fd("exit\n", 2);
 	if (cmd->args && cmd->args[0])
 	{
 		if (!is_num(cmd->args[0]))
 		{
 			print_error_exit(cmd);
-			controller_free(cont);
-			exit(2);
+			return (2);
 		}
 		if (cmd->args[1])
 		{

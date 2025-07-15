@@ -30,34 +30,27 @@ static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 	{
 		fd_printf(2, "minihell: %s: command not found\n", cmd->str_cmd);
 		free(path_env);
-		controller_free(cont);
-		exit(127);
+		cleanup_and_exit(cont, 127);
 	}
 	args = str_rarrdup_nset(cmd->args, cmd->str_cmd);
 	execve(path, args, cont->env);
 	free_contnpath(cont, args);
 	free(path_env);
 	free(path);
-	exit(126);
+	cleanup_and_exit(cont, 126);
 }
 
 static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 {
 	int	result;
 
-	result = 0;
 	if (redir_in_out(cmd, pip) == -1)
-	{
-		controller_free(cont);
-		exit(1);
-	}
+		cleanup_and_exit(cont, 1);
 	if (is_builtin(cmd))
 	{
-		result = prepare_builtin(cont, cmd);
-		controller_free(cont);
-		if (pip)
-			close(pip[0]);
-		exit(result);
+		close(0);
+		result = exec_builtins(cont, cmd->str_cmd, cmd->args);
+		cleanup_and_exit(cont, result);
 	}
 	exec_external_cmd(cont, cmd);
 }
@@ -68,20 +61,15 @@ static void	exec_parent(t_cmd *cmd, int *pip)
 	{
 		close(pip[1]);
 		if (cmd->next)
+		{
+			if (cmd->next->fd_inf >= 0)
+				close(cmd->next->fd_inf);
 			cmd->next->fd_inf = pip[0];
+		}
 		else
 			close(pip[0]);
 	}
-	if (cmd->fd_inf > 2 && cmd->fd_inf != -1)
-	{
-		close(cmd->fd_inf);
-		cmd->fd_inf = -1;
-	}
-	if (cmd->fd_out > 2 && cmd->fd_out != -1)
-	{
-		close(cmd->fd_out);
-		cmd->fd_out = -1;
-	}
+	cleanup_cmd_fds(cmd);
 }
 
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
@@ -91,7 +79,11 @@ void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip)
 	pid = fork();
 	if (pid < 0)
 	{
-		perror("fork");
+		if (pip)
+		{
+			safe_close(pip[0]);
+			safe_close(pip[1]);
+		}
 		return ;
 	}
 	if (pid == 0)

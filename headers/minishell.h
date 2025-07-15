@@ -120,5 +120,10 @@ int		process_commands(t_controller *controller);
 int		ft_exit(t_controller *cont, t_cmd *cmd);
 void	close_remaining_fds(t_cmd *cmd, int *pip);
 void	close_exit(int stdin, int stdou, char *exit);
+void	safe_close(int fd);
+void	cleanup_cmd_fds(t_cmd *cmd);
+void	cleanup_all_fds(t_cmd *cmd_list);
+void	close_all_fds(t_controller *cont);
+void	cleanup_and_exit(t_controller *cont, int code);
 
 #endif

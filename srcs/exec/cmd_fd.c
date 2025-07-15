@@ -16,7 +16,7 @@ static int	get_fd(char *filename, int type)
 {
 	int		fd;
 
-	fd = -2;
+	fd = -1;
 	if (type == IN)
 		fd = open(filename, O_RDONLY);
 	else if (type == OUT)
@@ -43,8 +43,7 @@ static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 			return (130);
 		return (1);
 	}
-	if (cmd->fd_inf >= 0)
-		close(cmd->fd_inf);
+	safe_close(cmd->fd_inf);
 	cmd->fd_inf = new_fd;
 	return (0);
 }
@@ -59,8 +58,6 @@ int	get_infile(t_token *tok, t_cmd *cmd)
 	{
 		if (tmp->type == IN || tmp->type == HEREDOC)
 		{
-			if (!tmp->next || !tmp->next->string)
-				return (1);
 			res = handle_input_redirect(tmp, cmd, tmp->type);
 			if (res != 0)
 				return (res);
@@ -75,13 +72,12 @@ static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 {
 	int	new_fd;
 
-	if (cmd->fd_out >= 0)
-		close(cmd->fd_out);
 	if (!tok->next || !tok->next->string)
 		return (1);
 	new_fd = get_fd(tok->next->string, type);
 	if (new_fd < 0)
 		return (1);
+	safe_close(cmd->fd_out);
 	cmd->fd_out = new_fd;
 	return (0);
 }

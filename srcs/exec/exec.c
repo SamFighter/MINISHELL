@@ -12,20 +12,6 @@
 
 #include "../../headers/minishell.h"
 
-void	handle_exec_error(char *path, char *path_env, int *pip)
-{
-	if (pip)
-	{
-		close(pip[0]);
-		close(pip[1]);
-	}
-	if (path)
-		free(path);
-	if (path_env)
-		free(path_env);
-	exit(127);
-}
-
 static void	wait_process(t_controller *cont, t_cmd *start_cmd)
 {
 	int		status;
@@ -52,30 +38,40 @@ static void	wait_process(t_controller *cont, t_cmd *start_cmd)
 	}
 }
 
+static int	setup_builtin_fds(t_cmd *cmd, int *stdin_backup, int *stdout_backup)
+{
+	*stdin_backup = dup(STDIN_FILENO);
+	*stdout_backup = dup(STDOUT_FILENO);
+	if (*stdin_backup == -1 || *stdout_backup == -1)
+		return (-1);
+	return (redir_in_out(cmd, NULL));
+}
+
+static void	restore_builtin_fds(int stdin_backup, int stdout_backup)
+{
+	dup2(stdin_backup, STDIN_FILENO);
+	dup2(stdout_backup, STDOUT_FILENO);
+	safe_close(stdin_backup);
+	safe_close(stdout_backup);
+}
+
 static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
 {
-	int	stdin_copy;
-	int	stdout_copy;
+	int	stdin_backup;
+	int	stdout_backup;
 	int	result;
 
 	if (!is_builtin(cmd) || cmd->next)
 		return (-1);
-	stdin_copy = dup(STDIN_FILENO);
-	stdout_copy = dup(STDOUT_FILENO);
-	if (redir_in_out(cmd, NULL) == -1)
+	if (setup_builtin_fds(cmd, &stdin_backup, &stdout_backup) == -1)
 	{
-		dup2(stdin_copy, STDIN_FILENO);
-		dup2(stdout_copy, STDOUT_FILENO);
-		close(stdin_copy);
-		close(stdout_copy);
+		safe_close(stdin_backup);
+		safe_close(stdout_backup);
 		return (-1);
 	}
-	close_exit(stdin_copy, stdout_copy, cmd->str_cmd);
-	result = prepare_builtin(cont, cmd);
-	dup2(stdin_copy, STDIN_FILENO);
-	dup2(stdout_copy, STDOUT_FILENO);
-	close(stdin_copy);
-	close(stdout_copy);
+	result = exec_builtins(cont, cmd->str_cmd, cmd->args);
+	restore_builtin_fds(stdin_backup, stdout_backup);
+	cleanup_cmd_fds(cmd);
 	return (result);
 }
 
@@ -95,6 +91,7 @@ static void	exec_pipeline(t_controller *cont)
 			{
 				perror("pipe");
 				cont->excode = 1;
+				cleanup_all_fds(cont->cmdlist.cmds);
 				return ;
 			}
 			current_pipe = pip;
@@ -123,5 +120,6 @@ int	exec(t_controller *cont)
 	}
 	exec_pipeline(cont);
 	wait_process(cont, cont->cmdlist.cmds);
+	cleanup_all_fds(cont->cmdlist.cmds);
 	return (cont->excode);
 }

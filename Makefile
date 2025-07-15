@@ -58,6 +58,7 @@ MANDATORY	= 		srcs/main.c 									\
 					srcs/builtins/builtin_utils.c					\
 					srcs/exec/heredoc.c								\
 					srcs/exec/redirection.c							\
+					srcs/exec/clean_fds.c							\
 					srcs/exec/envp_controller.c						\
 					srcs/exec/exec.c								\
 					srcs/exec/exec_process.c						\
