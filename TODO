@@ -1,0 +1,25 @@
+syntax error :
+- <<>
+- >><
+- <|
+- >|
+- >>|
+- <<|
+- exit |
+
+> export a=e b=c c=h d=o
+> $a$b$c$d salut
+ca cause un invalid read qui fait segfault le programme
+
+> exit d
+ca devrait pas exit
+
+> exit | echo salut
+le message d'exit n'est pas cense se print + leak de fd 3
+
+> env | /bin/grep PATH
+valgrind retourne une fatal error, je sais pas pourquoi, force a vous
+
+> export PATH=/usr/bin
+> ls
+ca retourne une command not found alors que ca devrait prendre le PATH

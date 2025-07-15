@@ -18,18 +18,22 @@
  * 
  * @return int 
  */
-int	ft_pwd(void)
-{
-	char	cwd[PATH_MAX];
 
-	if (getcwd(cwd, PATH_MAX))
-	{
-		ft_printf("%s\n", cwd);
-		return (0);
-	}
-	else
-	{
-		perror(cwd);
-		return (1);
-	}
+int ft_pwd(t_controller *cont)
+{
+    char cwd[PATH_MAX];
+
+    if (getcwd(cwd, PATH_MAX))
+    {
+        ft_printf("%s\n", cwd);
+        return (0);
+    }
+    else
+    {
+        if (cont->pwd)
+            ft_printf("%s\n", cont->pwd);
+        else
+            perror("pwd");
+        return (1);
+    }
 }

@@ -45,7 +45,8 @@ int	ft_cd(char **args, t_controller *cont)
 		free(old_pwd);
 		return (1);
 	}
-	update_oldpwd(cont, old_pwd);
+	if (old_pwd)
+		update_oldpwd(cont, old_pwd);
 	free(old_pwd);
 	free(cont->pwd);
 	cont->pwd = getcwd(NULL, PATH_MAX);

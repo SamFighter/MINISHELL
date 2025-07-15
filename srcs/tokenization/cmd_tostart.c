@@ -42,7 +42,7 @@ void	tk_tostart(t_token **tk)
 	t_token	*new_tk;
 
 	new_tk = *tk;
-	while (new_tk->prev != NULL)
+	while (new_tk && new_tk->prev != NULL)
 	{
 		new_tk->prev->next = new_tk;
 		new_tk = new_tk->prev;

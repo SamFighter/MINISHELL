@@ -38,7 +38,6 @@ static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 	free_contnpath(cont, args);
 	free(path_env);
 	free(path);
-	controller_free(cont);
 	exit(126);
 }
 
@@ -49,15 +48,15 @@ static void	exec_child(t_controller *cont, t_cmd *cmd, int *pip)
 	result = 0;
 	if (redir_in_out(cmd, pip) == -1)
 	{
-		close_remaining_fds(cmd, pip);
 		controller_free(cont);
 		exit(1);
 	}
-	close_remaining_fds(cmd, pip);
 	if (is_builtin(cmd))
 	{
 		result = prepare_builtin(cont, cmd);
 		controller_free(cont);
+		if (pip)
+			close(pip[0]);
 		exit(result);
 	}
 	exec_external_cmd(cont, cmd);

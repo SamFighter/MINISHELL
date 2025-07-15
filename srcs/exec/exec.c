@@ -70,6 +70,7 @@ static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
 		close(stdout_copy);
 		return (-1);
 	}
+	close_exit(stdin_copy, stdout_copy, cmd->str_cmd);
 	result = prepare_builtin(cont, cmd);
 	dup2(stdin_copy, STDIN_FILENO);
 	dup2(stdout_copy, STDOUT_FILENO);

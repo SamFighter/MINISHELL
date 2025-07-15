@@ -96,7 +96,7 @@ int		ft_cd(char **args, t_controller *cont);
 int		ft_echo(char **args);
 int		ft_export(t_controller *cont, char **args);
 int		ft_env(t_controller *cont);
-int		ft_pwd(void);
+int		ft_pwd(t_controller *cont);
 int		ft_unset(char **str, t_controller *cont);
 int		check_path(char *path, char *cmd);
 char	*search_envp(char *str, char **envp);
@@ -112,11 +112,13 @@ int		prepare_builtin(t_controller *cont, t_cmd *cmd);
 char	*get_path(char *str_envp, t_cmd *cmd);
 int		len_cmd(t_cmd *cmd);
 char	*search_in_path(char *str_envp, char *cmd);
-void	handle_child_status(t_controller *cont, int pid, int status, int last_pid);
+void	handle_child_status(t_controller *cont, int pid, int status,
+			int last_pid);
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip);
 void	handle_exec_error(char *path, char *path_env, int *pip);
 int		process_commands(t_controller *controller);
 int		ft_exit(t_controller *cont, t_cmd *cmd);
 void	close_remaining_fds(t_cmd *cmd, int *pip);
+void	close_exit(int stdin, int stdou, char *exit);
 
 #endif

@@ -63,13 +63,13 @@ void	tk_free(t_token *tk)
 static void	fd_free(t_cmd *cmd)
 {
 	if (cmd->fd_inf > 0)
-	  close(cmd->fd_inf);
+		close(cmd->fd_inf);
 	if (cmd->fd_out > 0)
-	  close(cmd->fd_out);
+		close(cmd->fd_out);
 	if (cmd->outfiles)
-	  utl_super_free((void **)cmd->outfiles);
+		utl_super_free((void **)cmd->outfiles);
 	if (cmd->infiles)
-	  utl_super_free((void **)cmd->infiles);
+		utl_super_free((void **)cmd->infiles);
 }
 
 /**

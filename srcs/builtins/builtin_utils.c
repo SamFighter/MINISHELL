@@ -66,7 +66,7 @@ int	exec_builtins(t_controller *cont, char *cmd_name, char **args)
 	else if (!str_ncmp(cmd_name, "export", INT_MAX))
 		cont->excode = ft_export(cont, args);
 	else if (!str_ncmp(cmd_name, "pwd", INT_MAX))
-		cont->excode = ft_pwd();
+		cont->excode = ft_pwd(cont);
 	else if (!str_ncmp(cmd_name, "unset", INT_MAX))
 		cont->excode = ft_unset(args, cont);
 	else if (!str_ncmp(cmd_name, "exit", INT_MAX))

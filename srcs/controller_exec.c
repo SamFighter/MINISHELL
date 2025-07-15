@@ -27,6 +27,8 @@ void	controller_exec(t_controller *controller)
 		return ;
 	}
 	controller->excode = process_commands(controller);
+	if (controller->excode == 2)
+		return ;
 	exec(controller);
 }
 

@@ -64,21 +64,11 @@ void	handle_child_status(t_controller *cont, int pid, int status,
 	}
 }
 
-void	close_remaining_fds(t_cmd *cmd, int *pip)
+void	close_exit(int stdin, int stdou, char *exit)
 {
-	if (cmd->fd_inf >= 0)
+	if (str_cmp("exit", exit) == 0)
 	{
-		close(cmd->fd_inf);
-		cmd->fd_inf = -1;
-	}
-	if (cmd->fd_out >= 0)
-	{
-		close(cmd->fd_out);
-		cmd->fd_out = -1;
-	}
-	if (pip)
-	{
-		close(pip[0]);
-		close(pip[1]);
+		close(stdin);
+		close(stdou);
 	}
 }
