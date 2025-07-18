@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:51:02 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/16 05:56:05 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/18 19:11:09 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static long	ft_atol(const char *str)
 		result = result * 10 + (str[i] - '0');
 		i++;
 	}
-	if (result * sign >= 9223372036854775807)
+	if (str_cmp("9223372036854775808", (char *)str) == 0 || str_len(str) > 19)
 		print_error_exit((char *)str);
 	return (result * sign);
 }
