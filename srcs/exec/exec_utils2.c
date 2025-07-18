@@ -46,7 +46,7 @@ void	expand_str(char *str, char **env, int fd, int code)
 	char	*s;
 
 	i = 0;
-	if (!code)
+	if (code)
 	{
 		fd_printf(fd, "%s\n", str);
 		return ;

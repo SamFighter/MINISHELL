@@ -12,9 +12,9 @@
 
 #include "../../headers/minishell.h"
 
-static void	print_error_exit(t_cmd *cmd)
+static void	print_error_exit(char *str)
 {
-	fd_printf(2, "minihell: exit: %s", cmd->args[0]);
+	fd_printf(2, "minihell: exit: %s", str);
 	fd_printf(2, ": numeric argument required\n");
 }
 
@@ -58,6 +58,8 @@ static long	ft_atol(const char *str)
 		result = result * 10 + (str[i] - '0');
 		i++;
 	}
+	if (result * sign >= 9223372036854775807)
+		print_error_exit((char *)str);
 	return (result * sign);
 }
 
@@ -71,7 +73,7 @@ int	ft_exit(t_controller *cont, t_cmd *cmd)
 	{
 		if (!is_num(cmd->args[0]))
 		{
-			print_error_exit(cmd);
+			print_error_exit(cmd->args[0]);
 			controller_free(cont);
 			exit(2);
 		}

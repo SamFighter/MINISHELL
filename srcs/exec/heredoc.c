@@ -17,7 +17,7 @@ static void	error_heredoc(char *str, char *str2)
 	if (g_sig != SIGINT)
 	{
 		ft_printf("warning: here-document delimited by end-of-file");
-		ft_printf("(wanted '%s')\n", str);
+		ft_printf("(wanted '%s')\n", str2);
 	}
 	if (str)
 		free(str);
