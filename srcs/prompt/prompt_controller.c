@@ -12,8 +12,6 @@
 
 #include "../../headers/minishell.h"
 
-char	*get_env(char *s, char **env);
-
 /**
  * Return a string (char *) using the user environment-variable and exit-code
  */

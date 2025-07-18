@@ -6,13 +6,12 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 13:56:43 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/08 18:32:27 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 09:07:11 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-char	*rem_quote_tk(char *tk, int type);
 char	*rem_quote(char *str, int start, int end);
 int		set_type(char c);
 
@@ -25,17 +24,18 @@ void	rem_quote_str(t_cmd *cmds)
 	{
 		while (cmds->tokens && cmds->tokens->string)
 		{
-			cmds->tokens->string = rem_quote_tk(cmds->tokens->string, 0);
+			if (cmds->tokens->type == INPUT && cmds->tokens->prev
+				&& cmds->tokens->prev->type == HEREDOC)
+				cmds->tokens->type = cmds->tokens->type;
+			else
+				cmds->tokens->string = rem_quote_tk(cmds->tokens->string, 0);
 			if (cmds->tokens->string[0] == 0)
 			{
 				free(cmds->tokens->string);
 				cmds->tokens->string = NULL;
 			}
 			if (cmds->tokens->type == CMD)
-			{
-				free(cmds->str_cmd);
-				cmds->str_cmd = str_dup(cmds->tokens->string);
-			}
+				cmds->str_cmd = str_rep(cmds->str_cmd, cmds->tokens->string);
 			if (!cmds->tokens->next)
 				break ;
 			cmds->tokens = cmds->tokens->next;
@@ -63,7 +63,7 @@ char	*rem_quote_tk(char *s, int type)
 		}
 		else if ((type == 1 && s[i] == '\"') || (type == 2 && s[i] == '\''))
 			pos[1] = i;
-		if (pos[1] != -1)
+		if (pos[0] != -1 && pos[1] != -1)
 		{
 			s = rem_quote(s, pos[0], pos[1]);
 			type = 0;

@@ -6,7 +6,7 @@
 #    By: fmontel <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/09 10:51:03 by salabbe           #+#    #+#              #
-#    Updated: 2025/07/04 10:33:58 by fmontel          ###   ########.fr        #
+#    Updated: 2025/07/15 15:27:54 by fmontel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,6 +72,7 @@ MANDATORY		:=	get_next_line.c 				\
 					func_string/str_str.c			\
 					func_string/str_substr.c		\
 					func_string/str_trim.c			\
+					func_string/str_arrjoin.c		\
 					func_utility/utl_dbl_arrlen.c	\
 					func_utility/utl_getlen_line.c	\
 					func_utility/utl_int_len.c		\

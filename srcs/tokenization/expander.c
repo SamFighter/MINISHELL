@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 11:19:52 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/10 15:07:40 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 08:24:18 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@ void	expander(t_cmd *cmds, char **env, int excode)
 	excode_toa = cnv_itoa(excode % 256);
 	while (cmds)
 	{
+		tk_tostart(&cmds->tokens);
 		tk = cmds->tokens;
 		while (tk)
 		{
 			if (str_nstr(tk->string, "$?"))
 				tk->string = rep_mult_atoa(tk->string, "$?", excode_toa);
-			else
+			else if (ctn_chckchar('$', tk->string))
 				tk = tk_expand(tk, env);
 			if (!tk->next)
 				break ;
@@ -68,7 +69,7 @@ t_token	*tk_expand(t_token *tk, char **env)
 		free(tmp);
 		free(str);
 		i++;
-		if (!tk->next && !str_nstr(tk->string, tk->env_str[i]))
+		if (tk->next && tk->env_str && !str_nstr(tk->string, tk->env_str[i]))
 			return (tk);
 	}
 	return (tk);
@@ -140,8 +141,9 @@ t_token	*clean_tk(t_token *tk, t_token *tk_next, char *env, int pos)
 		tk_fuse(&tk, &tk->next);
 	}
 	if (new)
-		tk_next->string = str_rejoin(tk_next->string, new);
-	tk = tk_next;
+		tk->string = str_rejoin(tk->string, new);
+	if (!new)
+		tk = tk_next;
 	free(prev);
 	free(new);
 	return (tk);

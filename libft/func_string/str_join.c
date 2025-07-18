@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 14:29:52 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/08 17:55:02 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/15 22:16:08 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	*str_rejoin(char *s1, char *s2)
 	if (!s1)
 		return (str_dup(s2));
 	if (!s2)
-		return (str_dup(s1));
+		return (s1);
 	s = mem_calloc(str_len(s1) + str_len(s2) + 1, sizeof(char));
 	if (!s)
 		return (NULL);

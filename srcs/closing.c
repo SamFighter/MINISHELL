@@ -20,7 +20,5 @@ void	closing(t_controller *cont)
 {
 	fd_printf(1, "exit\n");
 	controller_free(cont);
-	close (0);
-	close (1);
 	exit(cont->excode % 256);
 }

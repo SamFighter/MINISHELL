@@ -6,7 +6,7 @@
 /*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 16:47:28 by samfighter        #+#    #+#             */
-/*   Updated: 2025/06/17 11:06:01 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/16 09:55:07 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,6 @@ static int	setup_builtin_fds(t_cmd *cmd, int *stdin_backup, int *stdout_backup)
 	return (redir_in_out(cmd, NULL));
 }
 
-static void	restore_builtin_fds(int stdin_backup, int stdout_backup)
-{
-	dup2(stdin_backup, STDIN_FILENO);
-	dup2(stdout_backup, STDOUT_FILENO);
-	safe_close(stdin_backup);
-	safe_close(stdout_backup);
-}
-
 static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
 {
 	int	stdin_backup;
@@ -69,8 +61,16 @@ static int	handle_single_builtin(t_controller *cont, t_cmd *cmd)
 		safe_close(stdout_backup);
 		return (-1);
 	}
+	if (str_cmp("exit", cmd->str_cmd) == 0)
+	{
+		close(stdin_backup);
+		close(stdout_backup);
+	}
 	result = exec_builtins(cont, cmd->str_cmd, cmd->args);
-	restore_builtin_fds(stdin_backup, stdout_backup);
+	dup2(stdin_backup, STDIN_FILENO);
+	dup2(stdout_backup, STDOUT_FILENO);
+	safe_close(stdin_backup);
+	safe_close(stdout_backup);
 	cleanup_cmd_fds(cmd);
 	return (result);
 }

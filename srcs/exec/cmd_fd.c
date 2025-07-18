@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_fd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 15:46:44 by salabbe           #+#    #+#             */
-/*   Updated: 2025/07/08 19:04:41 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 11:24:16 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-static int	get_fd(char *filename, int type)
+static int	get_fd(char *filename, int type, char **env)
 {
 	int		fd;
 
@@ -22,7 +22,12 @@ static int	get_fd(char *filename, int type)
 	else if (type == OUT)
 		fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	else if (type == HEREDOC && g_sig != SIGINT)
-		fd = here_doc(filename);
+	{
+		if (ctn_chckchar('\"', filename) || ctn_chckchar('\'', filename))
+			fd = here_doc(filename, 1, env);
+		else
+			fd = here_doc(filename, 0, env);
+	}
 	else if (type == APPEND)
 		fd = open(filename, O_CREAT | O_APPEND | O_WRONLY, 0644);
 	if (type != HEREDOC && fd < 0)
@@ -30,16 +35,16 @@ static int	get_fd(char *filename, int type)
 	return (fd);
 }
 
-static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
+static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int t, char **env)
 {
 	int	new_fd;
 
 	if (!tok->next || !tok->next->string)
 		return (1);
-	new_fd = get_fd(tok->next->string, type);
+	new_fd = get_fd(tok->next->string, t, env);
 	if (new_fd < 0)
 	{
-		if (type == HEREDOC && g_sig == SIGINT)
+		if (t == HEREDOC && g_sig == SIGINT)
 			return (130);
 		return (1);
 	}
@@ -48,7 +53,7 @@ static int	handle_input_redirect(t_token *tok, t_cmd *cmd, int type)
 	return (0);
 }
 
-int	get_infile(t_token *tok, t_cmd *cmd)
+int	get_infile(t_token *tok, t_cmd *cmd, char **env)
 {
 	t_token	*tmp;
 	int		res;
@@ -58,7 +63,7 @@ int	get_infile(t_token *tok, t_cmd *cmd)
 	{
 		if (tmp->type == IN || tmp->type == HEREDOC)
 		{
-			res = handle_input_redirect(tmp, cmd, tmp->type);
+			res = handle_input_redirect(tmp, cmd, tmp->type, env);
 			if (res != 0)
 				return (res);
 			tmp = tmp->next;
@@ -68,13 +73,13 @@ int	get_infile(t_token *tok, t_cmd *cmd)
 	return (0);
 }
 
-static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
+static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int t, char **env)
 {
 	int	new_fd;
 
 	if (!tok->next || !tok->next->string)
 		return (1);
-	new_fd = get_fd(tok->next->string, type);
+	new_fd = get_fd(tok->next->string, t, env);
 	if (new_fd < 0)
 		return (1);
 	safe_close(cmd->fd_out);
@@ -82,7 +87,7 @@ static int	handle_output_redirect(t_token *tok, t_cmd *cmd, int type)
 	return (0);
 }
 
-int	get_outfile(t_token *tok, t_cmd *cmd)
+int	get_outfile(t_token *tok, t_cmd *cmd, char **env)
 {
 	t_token	*tmp;
 	int		result;
@@ -94,7 +99,7 @@ int	get_outfile(t_token *tok, t_cmd *cmd)
 		{
 			if (!tmp->next || !tmp->next->string || tmp->next->type == PIPE)
 				return (1);
-			result = handle_output_redirect(tmp, cmd, tmp->type);
+			result = handle_output_redirect(tmp, cmd, tmp->type, env);
 			if (result != 0)
 				return (result);
 			tmp = tmp->next;

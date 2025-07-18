@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 19:21:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/08 18:05:22 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/15 15:27:46 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ char		**str_atoarr(char *str, char c);
 char		**str_atoarr_ws(char *str);
 char		*str_rep(char *s1, char *s2);
 char		**sarr_add_if_none(char **sarr, char *s);
+char		**str_arrjoin(char **arr1, char **arr2);
+char		**str_arrrejoin(char **arr1, char **arr2);
 
 void		str_iteri(char *s, void (*f)(unsigned int, char*));
 char		*str_mapi(char const *s, char (*f)(unsigned int, char));

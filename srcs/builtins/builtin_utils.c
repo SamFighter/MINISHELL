@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 14:48:38 by salabbe           #+#    #+#             */
-/*   Updated: 2025/07/08 18:56:14 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/16 03:06:31 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 bool	is_builtin(t_cmd *cmd)
 {
-	const char	*builtin[] = {"cd", "pwd", "echo", "exit", \
-				"export", "env", "unset", NULL};
+	const char	*builtin[] = {"cd", "pwd", "echo", "exit",
+		"export", "env", "unset", NULL};
 	int			y;
 
 	y = 0;

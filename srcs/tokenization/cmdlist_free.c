@@ -31,6 +31,7 @@ void	cmdlist_reset(t_cmdlist *cmdlist)
 void	cmdlist_free(t_cmdlist *cmdlist)
 {
 	tk_tostart(&cmdlist->tokens);
+	cmd_tostart(&cmdlist->cmds);
 	tk_free(cmdlist->tokens);
 	cmdlist->tokens = NULL;
 	cmd_free(cmdlist->cmds);
@@ -46,10 +47,13 @@ void	tk_free(t_token *tk)
 	{
 		if (tk->prev)
 			free(tk->prev);
+		tk->prev = NULL;
 		if (tk->string)
 			free(tk->string);
+		tk->string = NULL;
 		if (tk->env_str)
 			utl_super_free((void **)tk->env_str);
+		tk->env_str = NULL;
 		if (tk->next)
 			tk = tk->next;
 		else
@@ -88,6 +92,7 @@ void	cmd_free(t_cmd *cmd)
 			free(cmd->str_cmd);
 		cmd->nb_tokens = 0;
 		cmd->has_cmd = 0;
+		tk_tostart(&cmd->tokens);
 		tk_free(cmd->tokens);
 		if (cmd->next)
 			cmd = cmd->next;

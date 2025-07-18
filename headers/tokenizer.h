@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/08 23:25:52 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 11:17:19 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ int			ctn_quotec(int literal, int pos, char c, char prev_c);
 int			reset_quote(int quote, char c, char prev_c);
 int			ctn_smbl(char *str, int pos);
 int			ctn_smbl_tk(char *str);
+char		*rem_quote_tk(char *tk, int type);
 
 //--------------   Set Token Types   ---------------------------
 

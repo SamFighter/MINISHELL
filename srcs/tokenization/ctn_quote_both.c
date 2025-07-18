@@ -34,9 +34,9 @@ int	ctn_quote_both(char *str, int pos, int in_quote)
 	{
 		c = str[i];
 		prev_c = str[i - 1];
-		if (ctn_quotes(0, i, c, prev_c))
+		if (ctn_quotes(0, i, c, prev_c) && quote == 1)
 			return (1);
-		else if (ctn_quotec(0, i, c, prev_c))
+		else if (ctn_quotec(0, i, c, prev_c) && quote == 2)
 			return (2);
 		i++;
 	}

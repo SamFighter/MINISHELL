@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:48:03 by salabbe           #+#    #+#             */
-/*   Updated: 2025/07/08 18:43:16 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 11:11:50 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,19 +81,17 @@ static int	process_single_command(t_token *cur_tok, t_cmd *cur_cmd,
 {
 	int	result;
 
-	result = get_infile(cur_tok, cur_cmd);
+	result = get_infile(cur_tok, cur_cmd, cont->env);
 	if (result == 130)
 	{
 		cont->excode = 130;
 		return (130);
 	}
-	if ((result == 1 || get_outfile(cur_tok, cur_cmd) == 1)
-		&& g_sig != SIGINT)
+	result = get_outfile(cur_tok, cur_cmd, cont->env);
+	if (result == 1)
 	{
-		fd_printf(2, "minihell: syntax error");
-		fd_printf(2, " near unexpected token `newline'\n");
-		cont->excode = 2;
-		return (2);
+		cont->excode = 1;
+		return (result);
 	}
 	return (0);
 }

@@ -3,53 +3,63 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 13:43:52 by salabbe           #+#    #+#             */
-/*   Updated: 2025/07/08 19:03:23 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 11:11:17 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-static void	error_heredoc(char *str)
+static void	error_heredoc(char *str, char *str2)
 {
 	if (g_sig != SIGINT)
 	{
 		ft_printf("warning: here-document delimited by end-of-file");
 		ft_printf("(wanted '%s')\n", str);
 	}
+	if (str)
+		free(str);
+	if (str2)
+		free(str2);
+	str = NULL;
+	str2 = NULL;
 }
 
-void	sig_hd(int sig)
+static void	free_hd(char *str, char *str2)
 {
-	(void) sig;
-	g_sig = SIGINT;
-	printf("\n");
-	close(0);
+	if (str)
+		free(str);
+	if (str2)
+		free(str2);
 }
 
-static int	read_prompt(int fd, char *str)
+static int	read_prompt(int *fd, char *str, int code, char **env)
 {
 	char	*prompt;
+	char	*tmp;
 
 	prompt = NULL;
-	while (1)
+	tmp = str_dup(str);
+	if (code == 1)
+		tmp = rem_quote_tk(tmp, 0);
+	while (g_sig != SIGINT)
 	{
 		prompt = readline("> ");
 		if (!prompt)
 		{
-			error_heredoc(str);
+			error_heredoc(prompt, tmp);
 			break ;
 		}
-		if (!str_cmp(str, prompt))
+		if (!str_cmp(prompt, tmp))
 		{
-			free(prompt);
+			free_hd(prompt, tmp);
 			break ;
 		}
-		fd_printf(fd, "%s\n", prompt);
-		free(prompt);
+		expand_str(prompt, env, fd[0], code);
 	}
+	dup2(fd[1], 0);
 	return (0);
 }
 
@@ -77,27 +87,28 @@ static char	*get_tmp_name(void)
 	return (result);
 }
 
-int	here_doc(char *eof)
+int	here_doc(char *eof, int code, char **env)
 {
-	int		fd;
+	int		fd[2];
 	char	*tmp_name;
 
 	tmp_name = get_tmp_name();
+	fd[1] = dup(0);
+	signal(SIGINT, sig_hd);
 	if (!tmp_name)
 		return (-1);
-	fd = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd < 0)
+	fd[0] = open(tmp_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd[0] < 0)
 	{
 		free(tmp_name);
 		return (-1);
 	}
-	signal(SIGINT, sig_hd);
-	read_prompt(fd, eof);
-	signal(SIGINT, sig_int);
-	close(fd);
-	fd = open(tmp_name, O_RDONLY);
-	if (fd > 0)
+	read_prompt(fd, eof, code, env);
+	close(fd[0]);
+	fd[0] = open(tmp_name, O_RDONLY);
+	if (fd[0] > 0)
 		unlink(tmp_name);
 	free(tmp_name);
-	return (fd);
+	close(fd[1]);
+	return (fd[0]);
 }

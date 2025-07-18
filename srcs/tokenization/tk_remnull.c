@@ -48,7 +48,8 @@ void	tk_remnull2(t_token	**token)
 		else
 			break ;
 	}
-	if (!tk->string && tk->prev)
+	if (!tk->string && tk->prev && tk->type != INPUT
+		&& tk->type != OUTPUT)
 	{
 		tk = tk->prev;
 		tk_fuse(&tk, &tk->next);

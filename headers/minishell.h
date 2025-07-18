@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 13:05:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/08 18:54:53 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 11:13:22 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ char	*prompt_controller(int excode, char **env);
 void	cmdlist_reset(t_cmdlist *cmdlist);
 void	closing(t_controller *cont);
 void	controller_exec(t_controller *controller);
+char	*get_env(char *s, char **env);
 
 //----------------   Init & Free   -----------------------------
 
@@ -87,6 +88,8 @@ int		sig_value(int prev_value);
 void	sig_int(int sig);
 void	sig_segv(int sig);
 void	sig_abrt(int sig);
+void	sig_int_norl(int sig);
+void	sig_hd(int sig);
 
 //------------------   Execs   ---------------------------------
 
@@ -98,32 +101,28 @@ int		ft_export(t_controller *cont, char **args);
 int		ft_env(t_controller *cont);
 int		ft_pwd(t_controller *cont);
 int		ft_unset(char **str, t_controller *cont);
-int		check_path(char *path, char *cmd);
 char	*search_envp(char *str, char **envp);
 char	*env_cut(char *str);
 char	*exportation(char *str, t_controller *cont);
 int		exec(t_controller *cont);
-int		here_doc(char *eof);
+int		here_doc(char *eof, int code, char **env);
 int		redir_in_out(t_cmd *cmd, int *pip);
-int		get_infile(t_token *tok, t_cmd *cmd);
-int		get_outfile(t_token *tok, t_cmd *cmd);
+int		get_infile(t_token *tok, t_cmd *cmd, char **env);
+int		get_outfile(t_token *tok, t_cmd *cmd, char **env);
 int		exec_builtins(t_controller *cont, char *cmd_name, char **args);
-int		prepare_builtin(t_controller *cont, t_cmd *cmd);
 char	*get_path(char *str_envp, t_cmd *cmd);
 int		len_cmd(t_cmd *cmd);
 char	*search_in_path(char *str_envp, char *cmd);
 void	handle_child_status(t_controller *cont, int pid, int status,
 			int last_pid);
 void	exec_cmd(t_controller *cont, t_cmd *cmd, int *pip);
-void	handle_exec_error(char *path, char *path_env, int *pip);
 int		process_commands(t_controller *controller);
 int		ft_exit(t_controller *cont, t_cmd *cmd);
-void	close_remaining_fds(t_cmd *cmd, int *pip);
-void	close_exit(int stdin, int stdou, char *exit);
 void	safe_close(int fd);
 void	cleanup_cmd_fds(t_cmd *cmd);
 void	cleanup_all_fds(t_cmd *cmd_list);
 void	close_all_fds(t_controller *cont);
 void	cleanup_and_exit(t_controller *cont, int code);
+void	expand_str(char *str, char **env, int fd, int code);
 
 #endif

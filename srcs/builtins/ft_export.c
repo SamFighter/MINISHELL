@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 15:31:39 by salabbe           #+#    #+#             */
-/*   Updated: 2025/07/08 21:10:34 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/17 07:44:04 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ static int	export_no_args(t_controller *cont)
 		ft_printf("declare -x ");
 		while (env[y][i] != '=' && env[y][i])
 			ft_printf("%c", env[y][i++]);
-		ft_printf("=\"%s\"\n", cut);
+		if (env[y][i] == '=')
+			ft_printf("=\"%s\"\n", cut);
+		else
+			ft_printf("\n");
 		free(cut);
 		y++;
 	}
@@ -66,8 +69,8 @@ static int	check_alr_env(char **env, char *str)
 	j = 0 ;
 	while (env[j])
 	{
-		if (!str_ncmp(env[j], str, i) && \
-			(env[j][i] == '\0' || env[j][i] == '='))
+		if (!str_ncmp(env[j], str, i)
+			&& (env[j][i] == '\0' || env[j][i] == '='))
 			return (j);
 		j++;
 	}

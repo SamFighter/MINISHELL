@@ -43,7 +43,6 @@ int	tokenizer(char *str, t_controller *cont)
 	if (cmdlist->invalid == 0)
 		cmdlist->invalid = check_invalid(&cmdlist->cmds);
 	cmd_tostart(&cmdlist->cmds);
-	//log_controller(cont, 1);
 	return (1);
 }
 

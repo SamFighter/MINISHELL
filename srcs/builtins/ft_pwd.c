@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 14:27:58 by salabbe           #+#    #+#             */
-/*   Updated: 2025/05/15 10:20:38 by salabbe          ###   ########.fr       */
+/*   Updated: 2025/07/16 03:08:03 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,21 @@
  * 
  * @return int 
  */
-
-int ft_pwd(t_controller *cont)
+int	ft_pwd(t_controller *cont)
 {
-    char cwd[PATH_MAX];
+	char	cwd[PATH_MAX];
 
-    if (getcwd(cwd, PATH_MAX))
-    {
-        ft_printf("%s\n", cwd);
-        return (0);
-    }
-    else
-    {
-        if (cont->pwd)
-            ft_printf("%s\n", cont->pwd);
-        else
-            perror("pwd");
-        return (1);
-    }
+	if (getcwd(cwd, PATH_MAX))
+	{
+		ft_printf("%s\n", cwd);
+		return (0);
+	}
+	else
+	{
+		if (cont->pwd)
+			ft_printf("%s\n", cont->pwd);
+		else
+			perror("pwd");
+		return (1);
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:24:46 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/10 15:03:08 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/15 16:06:39 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ char	**mult_str_env(char **env, char *str)
 {
 	int		start;
 	char	*tmp;
-	char	**new_env;
 
 	if (!str)
 		return (NULL);
@@ -56,11 +55,8 @@ char	**mult_str_env(char **env, char *str)
 		if (start == -1)
 			break ;
 		tmp = str_env(str, start);
-		new_env = str_arrdup_nset(env, tmp);
-		utl_super_free((void **)env);
-		env = str_arrdup(new_env);
+		env = str_arrrep_nset(env, tmp);
 		free(tmp);
-		utl_super_free((void **)new_env);
 	}
 	return (env);
 }

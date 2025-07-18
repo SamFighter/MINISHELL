@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:51:02 by fmontel           #+#    #+#             */
-/*   Updated: 2025/07/10 14:15:26 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/16 05:56:05 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ int	ft_exit(t_controller *cont, t_cmd *cmd)
 		if (!is_num(cmd->args[0]))
 		{
 			print_error_exit(cmd);
-			return (2);
+			controller_free(cont);
+			exit(2);
 		}
 		if (cmd->args[1])
 		{

@@ -6,7 +6,7 @@
 /*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 14:35:06 by fmontel           #+#    #+#             */
-/*   Updated: 2025/06/28 10:11:59 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/15 15:56:53 by fmontel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,16 @@ void	tk_fuse(t_token **token, t_token **tk_next)
 	tk->string = str_rejoin(tk->string, next->string);
 	if (next->string)
 		free(next->string);
+	next->string = NULL;
+	tk->env_str = str_arrrejoin(tk->env_str, next->env_str);
 	if (next->env_str)
 		utl_super_free((void **)next->env_str);
-	tk->next = next->next;
-	if (tk->next)
+	next->env_str = NULL;
+	if (next->next)
 	{
-		tk->next->prev = tk;
-		*tk_next = tk->next;
+		next->next->prev = tk;
+		tk->next = next->next;
+		*tk_next = next->next;
 	}
 	else
 		*tk_next = NULL;

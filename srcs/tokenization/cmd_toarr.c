@@ -60,6 +60,8 @@ void	cmd_toarr2(t_cmdlist **cmdlist, char **env, int excode)
 	cmd_tostart(&cmds);
 	expander(cmds, env, excode);
 	cmd_tostart(&cmds);
+	tk_remnull(&(*cmdlist)->cmds);
+	cmd_tostart(&cmds);
 	rem_quote_str(cmds);
 	(*cmdlist)->cmds = cmds;
 	tk_remnull(&(*cmdlist)->cmds);
