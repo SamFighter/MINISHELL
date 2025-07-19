@@ -85,11 +85,14 @@ void	cmd_free(t_cmd *cmd)
 	{
 		if (cmd->prev)
 			free(cmd->prev);
+		cmd->prev = NULL;
 		if (cmd->args)
 			utl_super_free((void **)cmd->args);
+		cmd->args = NULL;
 		fd_free(cmd);
 		if (cmd->str_cmd)
 			free(cmd->str_cmd);
+		cmd->str_cmd = NULL;
 		cmd->nb_tokens = 0;
 		cmd->has_cmd = 0;
 		tk_tostart(&cmd->tokens);
