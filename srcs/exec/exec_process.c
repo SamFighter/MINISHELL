@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec_process.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fmontel <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: salabbe <salabbe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 09:36:25 by salabbe           #+#    #+#             */
-/*   Updated: 2025/07/10 14:41:39 by fmontel          ###   ########.fr       */
+/*   Updated: 2025/07/19 14:24:16 by salabbe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
-
-void	free_contnpath(t_controller *cont, char	**args)
-{
-	utl_super_free((void **) args);
-	controller_free(cont);
-}
 
 static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 {
@@ -34,7 +28,7 @@ static void	exec_external_cmd(t_controller *cont, t_cmd *cmd)
 	}
 	args = str_rarrdup_nset(cmd->args, cmd->str_cmd);
 	execve(path, args, cont->env);
-	free_contnpath(cont, args);
+	utl_super_free((void **)args);
 	free(path_env);
 	free(path);
 	cleanup_and_exit(cont, 126);
